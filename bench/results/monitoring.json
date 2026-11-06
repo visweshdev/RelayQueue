@@ -1,0 +1,6 @@
+{
+  "healthy_targets": 6,
+  "worker_targets": 4,
+  "dashboard_uid": "forgequeue",
+  "verified": true
+}

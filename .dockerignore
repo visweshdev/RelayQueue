@@ -1,0 +1,12 @@
+.git
+.venv
+.uv-cache
+.uv-clean
+tmp
+__pycache__
+.env
+.coverage*
+.mypy_cache
+.pytest_cache
+.ruff_cache
+.playwright-cli

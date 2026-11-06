@@ -1,0 +1,31 @@
+name: Nightly reliability
+on:
+  schedule:
+    - cron: "30 20 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  chaos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RUN_CHAOS: "1"
+      REQUIRE_DOCKER: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt && pip install --no-deps -e .
+      - run: pytest tests/chaos -v
+      - run: docker compose up -d --build --wait --wait-timeout 180
+      - run: python -m bench.throughput --jobs 1000 --workers 4 --output nightly-throughput.json
+      - run: python -m bench.monitoring
+      - run: docker compose down --volumes
+        if: always()
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reliability-and-benchmarks
+          path: bench/results/

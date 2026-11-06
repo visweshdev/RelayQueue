@@ -1,0 +1,43 @@
+{
+  "experiment": "P1",
+  "machine": {
+    "cpu": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+    "logical_cpus": 18,
+    "ram_bytes": 16641941504,
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.14",
+    "docker_server": "29.9.2",
+    "docker_allocation": {
+      "logical_cpus": 18,
+      "ram_bytes": 8058474496
+    },
+    "runtime_image_id": "sha256:802e9d4ccbf6de78d5ea6538e7351e9f54d91d63679a62b82057db9a641b80b7",
+    "source_sha256": "4576bdd376a2bc9d9d9ba4ad0d075263ae5a146a0729c0e9cbbb049944d220cf",
+    "timestamp": "2026-11-06T05:34:23.915170+00:00",
+    "load_generator": {
+      "os": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+      "python": "3.12.16",
+      "api_url": "http://api:8000"
+    }
+  },
+  "workers": 4,
+  "jobs": 20000,
+  "elapsed_s": 265.40424137900004,
+  "submission_s": 140.14447150399997,
+  "jobs_per_minute": 4521.404758887736,
+  "drain_timed_out": false,
+  "submission_retries": 0,
+  "submit_p95_ms": 299.9600329999339,
+  "submit_p99_ms": 395.9830809999403,
+  "pickup_under_load_p95_ms": 115773.29400000001,
+  "outcomes": {
+    "succeeded": 20000
+  },
+  "missing_jobs": 0,
+  "configuration": {
+    "task": "noop",
+    "submit_concurrency": 32,
+    "worker_count_source": "operator argument; verify compose scale"
+  },
+  "measurement_note": "Includes submission and polling overhead; load pickup is not idle P4."
+}

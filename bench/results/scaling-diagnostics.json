@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-05",
+  "phase": "two-worker scaling drain",
+  "cpu_percent_snapshot": {
+    "load_generator": 14.12,
+    "worker_1": 45.69,
+    "worker_2": 46.21,
+    "api": 71.81,
+    "reaper": 34.45,
+    "postgres": 47.21,
+    "redis": 5.09
+  },
+  "postgres_wait_snapshot": [
+    {
+      "state": "active",
+      "type": "IO",
+      "event": "WALSync",
+      "count": 1
+    },
+    {
+      "state": "active",
+      "type": null,
+      "event": null,
+      "count": 1
+    },
+    {
+      "state": "idle",
+      "type": "Client",
+      "event": "ClientRead",
+      "count": 15
+    },
+    {
+      "state": "idle",
+      "type": null,
+      "event": null,
+      "count": 1
+    },
+    {
+      "state": "idle in transaction",
+      "type": "Client",
+      "event": "ClientRead",
+      "count": 1
+    }
+  ],
+  "interpretation": "Single samples, not a full profiler. Polling/list serialization, reconciliation and durable WAL flushes contribute to shared overhead; worker count alone is not the end-to-end capacity limit.",
+  "method": "docker stats --no-stream and pg_stat_activity grouping while the queue drained",
+  "configuration": "baseline single API process",
+  "runtime_image_id": "sha256:b4f8a63edc5854a3e853a032f7974cc04d16c3ef294080e11772590b6fd9af91",
+  "source_sha256": "b719780bdcacc55b6eabb8bfbbacda33b3300f67e3964556053d13d64ed416d8"
+}

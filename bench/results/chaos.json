@@ -1,0 +1,180 @@
+{
+  "experiment": "R1-R3",
+  "machine": {
+    "cpu": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+    "logical_cpus": 18,
+    "ram_bytes": 16641941504,
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.14",
+    "docker_server": "29.9.2",
+    "docker_allocation": {
+      "logical_cpus": 18,
+      "ram_bytes": 8058474496
+    },
+    "runtime_image_id": "sha256:802e9d4ccbf6de78d5ea6538e7351e9f54d91d63679a62b82057db9a641b80b7",
+    "source_sha256": "4576bdd376a2bc9d9d9ba4ad0d075263ae5a146a0729c0e9cbbb049944d220cf",
+    "timestamp": "2026-11-05T13:19:50.218541+00:00"
+  },
+  "submitted": 10000,
+  "seed": 42,
+  "workers": 4,
+  "kill_interval_s": 5,
+  "duration_s": 120,
+  "events": [
+    {
+      "container": "84e9e857dab1",
+      "seconds": 5.610000000000582,
+      "observed_running_jobs": 1
+    },
+    {
+      "container": "84e9e857dab1",
+      "seconds": 10.563000000000102,
+      "observed_running_jobs": 1
+    },
+    {
+      "container": "3e0ee85cc6cd",
+      "seconds": 15.59400000000096,
+      "observed_running_jobs": 1
+    },
+    {
+      "container": "8677a8e691e3",
+      "seconds": 20.57800000000134,
+      "observed_running_jobs": 1
+    },
+    {
+      "container": "8677a8e691e3",
+      "seconds": 25.57800000000134,
+      "observed_running_jobs": 1
+    },
+    {
+      "container": "8677a8e691e3",
+      "seconds": 30.57800000000134,
+      "observed_running_jobs": 2
+    },
+    {
+      "container": "84e9e857dab1",
+      "seconds": 35.54700000000048,
+      "observed_running_jobs": 2
+    },
+    {
+      "container": "84e9e857dab1",
+      "seconds": 40.5630000000001,
+      "observed_running_jobs": 2
+    },
+    {
+      "container": "de38924d6f6c",
+      "seconds": 45.61000000000058,
+      "observed_running_jobs": 1
+    },
+    {
+      "container": "84e9e857dab1",
+      "seconds": 50.625,
+      "observed_running_jobs": 3
+    },
+    {
+      "container": "84e9e857dab1",
+      "seconds": 55.65600000000086,
+      "observed_running_jobs": 4
+    },
+    {
+      "container": "84e9e857dab1",
+      "seconds": 60.57800000000134,
+      "observed_running_jobs": 5
+    },
+    {
+      "container": "8677a8e691e3",
+      "seconds": 65.64100000000144,
+      "observed_running_jobs": 1
+    },
+    {
+      "container": "8677a8e691e3",
+      "seconds": 70.59400000000096,
+      "observed_running_jobs": 2
+    },
+    {
+      "container": "84e9e857dab1",
+      "seconds": 75.57800000000134,
+      "observed_running_jobs": 4
+    },
+    {
+      "container": "8677a8e691e3",
+      "seconds": 80.67200000000048,
+      "observed_running_jobs": 3
+    },
+    {
+      "container": "de38924d6f6c",
+      "seconds": 85.67200000000048,
+      "observed_running_jobs": 1
+    },
+    {
+      "container": "8677a8e691e3",
+      "seconds": 90.57800000000134,
+      "observed_running_jobs": 4
+    },
+    {
+      "container": "de38924d6f6c",
+      "seconds": 95.57800000000134,
+      "observed_running_jobs": 2
+    },
+    {
+      "container": "3e0ee85cc6cd",
+      "seconds": 100.625,
+      "observed_running_jobs": 1
+    },
+    {
+      "container": "84e9e857dab1",
+      "seconds": 105.59400000000096,
+      "observed_running_jobs": 1
+    },
+    {
+      "container": "8677a8e691e3",
+      "seconds": 110.59400000000096,
+      "observed_running_jobs": 3
+    },
+    {
+      "container": "de38924d6f6c",
+      "seconds": 115.59400000000096,
+      "observed_running_jobs": 3
+    },
+    {
+      "container": "3e0ee85cc6cd",
+      "seconds": 120.59400000000096,
+      "observed_running_jobs": 2
+    }
+  ],
+  "missing_jobs": 0,
+  "nonterminal_jobs": 0,
+  "outcomes": {
+    "succeeded": 10000
+  },
+  "observed_duplicate_completions": 1,
+  "observed_duplicate_rate": 0.0001,
+  "lease_expiry_to_ready_s": [
+    2.949383020401001,
+    2.937839984893799,
+    2.9945008754730225,
+    2.9292221069335938,
+    2.9834752082824707,
+    2.942286968231201,
+    2.947258949279785,
+    2.950079917907715,
+    2.930061101913452,
+    2.9362030029296875,
+    2.956900119781494,
+    2.940976142883301,
+    2.969444990158081,
+    2.913851022720337,
+    2.9467899799346924,
+    2.978731155395508,
+    2.9186418056488037,
+    2.9440579414367676,
+    2.945807933807373,
+    2.9564030170440674,
+    2.929006814956665
+  ],
+  "limitations": [
+    "Duplicate completions are a lower bound: death before audit is invisible.",
+    "Ready timing is the first durable observation after confirmed Redis republish.",
+    "Redis and PostgreSQL wall clocks must be synchronized for cross-store timing."
+  ]
+}

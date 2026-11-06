@@ -1,0 +1,67 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: fq
+      POSTGRES_PASSWORD: fq
+      POSTGRES_DB: fq
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U fq -d fq"]
+      interval: 1s
+      retries: 30
+  redis:
+    image: redis:7.4-alpine
+    command: [redis-server, --save, "", --appendonly, "no"]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 1s
+      retries: 30
+  migrate:
+    build:
+      context: ../..
+      dockerfile: deploy/Dockerfile
+    image: forgequeue-chaos:local
+    environment: &env
+      DATABASE_URL: postgresql+asyncpg://fq:fq@postgres:5432/fq
+      REDIS_URL: redis://redis:6379/0
+      LEASE_MS: "3000"
+      HEARTBEAT_MS: "1000"
+      REAPER_INTERVAL_MS: "500"
+      SCHEDULER_INTERVAL_MS: "100"
+      RECONCILE_INTERVAL_S: "2"
+      BASE_BACKOFF_S: "0"
+      MAX_BACKOFF_S: "0"
+      SHUTDOWN_GRACE_S: "3"
+    command: [alembic, upgrade, head]
+    depends_on:
+      postgres:
+        condition: service_healthy
+  api:
+    image: forgequeue-chaos:local
+    environment: *env
+    ports: ["127.0.0.1:18800:8000"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+  worker:
+    image: forgequeue-chaos:local
+    environment: *env
+    command: [python, -m, forgequeue.worker.worker]
+    deploy:
+      replicas: 2
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+  reaper:
+    image: forgequeue-chaos:local
+    environment: *env
+    command: [python, -m, forgequeue.reaper.reaper]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy

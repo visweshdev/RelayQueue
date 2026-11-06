@@ -1,0 +1,8 @@
+FROM python:3.12-slim
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+WORKDIR /app
+COPY requirements-dev.txt /app/
+RUN pip install --no-cache-dir -r requirements-dev.txt
+COPY bench /app/bench
+COPY src /app/src
+CMD ["python", "-m", "bench.throughput", "--url", "http://api:8000"]

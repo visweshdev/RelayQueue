@@ -1,0 +1,118 @@
+name: forgequeue
+x-app: &app
+  build:
+    context: .
+    dockerfile: deploy/Dockerfile
+  image: forgequeue:local
+  restart: unless-stopped
+  environment: &environment
+    DATABASE_URL: postgresql+asyncpg://fq:fq@postgres:5432/fq
+    REDIS_URL: redis://redis:6379/0
+    API_KEYS: ${API_KEYS:-dev-key-1}
+    QUEUES: ${QUEUES:-default}
+    LEASE_MS: ${LEASE_MS:-30000}
+    HEARTBEAT_MS: ${HEARTBEAT_MS:-10000}
+    REAPER_INTERVAL_MS: ${REAPER_INTERVAL_MS:-5000}
+    SCHEDULER_INTERVAL_MS: ${SCHEDULER_INTERVAL_MS:-1000}
+    RECONCILE_INTERVAL_S: ${RECONCILE_INTERVAL_S:-60}
+    BASE_BACKOFF_S: ${BASE_BACKOFF_S:-2}
+    MAX_BACKOFF_S: ${MAX_BACKOFF_S:-300}
+    WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-1}
+    SHUTDOWN_GRACE_S: ${SHUTDOWN_GRACE_S:-30}
+    MAX_PAYLOAD_BYTES: ${MAX_PAYLOAD_BYTES:-65536}
+    RATE_LIMIT_PER_S: ${RATE_LIMIT_PER_S:-200}
+    HTTP_ALLOWED_ORIGINS: ${HTTP_ALLOWED_ORIGINS:-}
+    DB_POOL_SIZE: ${DB_POOL_SIZE:-10}
+    BATCH_SIZE: ${BATCH_SIZE:-200}
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+    migrate:
+      condition: service_completed_successfully
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: fq
+      POSTGRES_PASSWORD: fq
+      POSTGRES_DB: fq
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U fq -d fq"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  redis:
+    image: redis:7.4-alpine
+    command: [redis-server, --appendonly, "yes"]
+    volumes: [redis-data:/data]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  migrate:
+    <<: *app
+    restart: "no"
+    command: [alembic, upgrade, head]
+    depends_on:
+      postgres:
+        condition: service_healthy
+  api:
+    <<: *app
+    environment:
+      <<: *environment
+      API_WORKERS: ${API_WORKERS:-2}
+    ports: ["127.0.0.1:8000:8000"]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/ready', timeout=4)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  worker:
+    <<: *app
+    command: [python, -m, forgequeue.worker.worker]
+    deploy:
+      replicas: 4
+    stop_grace_period: 40s
+    healthcheck:
+      test: [CMD, python, -m, forgequeue.health]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+  reaper:
+    <<: *app
+    command: [python, -m, forgequeue.reaper.reaper]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:9100/metrics', timeout=4)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+  prometheus:
+    image: prom/prometheus:v3.0.1
+    volumes: ["./deploy/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["127.0.0.1:9090:9090"]
+    restart: unless-stopped
+  grafana:
+    image: grafana/grafana:11.4.0
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-forgequeue-local}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/grafana/dashboard.json:/var/lib/grafana/dashboards/forgequeue.json:ro
+      - grafana-data:/var/lib/grafana
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on: [prometheus]
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  redis-data:
+  grafana-data:

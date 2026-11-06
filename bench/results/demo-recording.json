@@ -1,0 +1,38 @@
+{
+  "elapsed_s": 40.42200000000048,
+  "exit_code": 0,
+  "events": [
+    {
+      "seconds": 1.2189999999991414,
+      "text": "Submitted 20 noop jobs"
+    },
+    {
+      "seconds": 1.8130000000001019,
+      "text": "Verified: 20 succeeded"
+    },
+    {
+      "seconds": 1.875,
+      "text": "Flaky job will retry, then enter the dead-letter queue"
+    },
+    {
+      "seconds": 3.125,
+      "text": "SIGKILL + restart: worker 84e9e857dab1, job 7961e9f3-e4c6-4e62-a593-f7ee7e250975"
+    },
+    {
+      "seconds": 3.125,
+      "text": "Waiting for lease expiry, requeue and successful recovery..."
+    },
+    {
+      "seconds": 40.3130000000001,
+      "text": "Verified final outcomes: {'succeeded': 24, 'dead': 1}"
+    },
+    {
+      "seconds": 40.375,
+      "text": "Recovered job history: ['lease_expired', 'succeeded']"
+    },
+    {
+      "seconds": 40.375,
+      "text": "All 25 accepted jobs accounted for"
+    }
+  ]
+}

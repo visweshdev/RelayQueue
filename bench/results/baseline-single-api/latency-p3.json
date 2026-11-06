@@ -1,0 +1,34 @@
+{
+  "machine": {
+    "cpu": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+    "logical_cpus": 18,
+    "ram_bytes": 16641941504,
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.14",
+    "docker_server": "29.9.2",
+    "docker_allocation": {
+      "logical_cpus": 18,
+      "ram_bytes": 8058462208
+    },
+    "runtime_image_id": "sha256:b4f8a63edc5854a3e853a032f7974cc04d16c3ef294080e11772590b6fd9af91",
+    "source_sha256": "b719780bdcacc55b6eabb8bfbbacda33b3300f67e3964556053d13d64ed416d8",
+    "timestamp": "2026-11-05T03:48:52.020041+00:00",
+    "load_generator": {
+      "os": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.41",
+      "python": "3.12.16",
+      "api_url": "http://api:8000"
+    }
+  },
+  "measurements": [
+    {
+      "target_rps": 100,
+      "seconds": 300,
+      "actual_rps": 77.92869222305752,
+      "p95_ms": 2100.0,
+      "p99_ms": 2700.0,
+      "failures": 0,
+      "locust_exit_code": 0
+    }
+  ],
+  "first_p95_over_100ms_target_rps": 100
+}

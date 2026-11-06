@@ -1,0 +1,68 @@
+{
+  "date": "2026-11-06",
+  "python": "3.12.14",
+  "os": "Windows-11-10.0.26300-SP0",
+  "logical_cpus": 18,
+  "ram_bytes": 16641941504,
+  "tests": {
+    "passed": 157,
+    "skipped": 0,
+    "failed": 0,
+    "warnings": 3,
+    "duration_s": 108.82
+  },
+  "coverage": {
+    "covered_lines": 1113,
+    "num_statements": 1214,
+    "percent_covered": 89.93103448275862,
+    "percent_covered_display": "90",
+    "missing_lines": 101,
+    "excluded_lines": 0,
+    "percent_statements_covered": 91.68039538714991,
+    "percent_statements_covered_display": "92",
+    "num_branches": 236,
+    "num_partial_branches": 29,
+    "covered_branches": 191,
+    "missing_branches": 45,
+    "percent_branches_covered": 80.9322033898305,
+    "percent_branches_covered_display": "81"
+  },
+  "coverage_gate": "PASS",
+  "required_percent": 85,
+  "ruff": "PASS",
+  "format": "PASS",
+  "mypy_strict": "PASS",
+  "mypy_source_files": 36,
+  "offline_migration_sql": "PASS",
+  "wheel_build": "PASS",
+  "docker_compose_runtime": "PASS",
+  "benchmarks": "EXECUTED; P3 FAIL",
+  "blockers": [],
+  "notes": [
+    "No source files excluded from coverage.",
+    "123 unit and 34 real PostgreSQL/Redis integration tests passed, including independent-process metric aggregation.",
+    "Six process-chaos tests passed after recovery changes, before API process-count change; final-image R1-R6 also passed.",
+    "WSL 2.7.14 installed; Docker 29.9.2 running. Docker allocation: 18 CPUs, 8058462208 bytes RAM.",
+    "Remote CI NOT RUN: no configured repository. Local Windows and Linux checks passed."
+  ],
+  "chaos": {
+    "passed": 6,
+    "skipped": 0,
+    "failed": 0,
+    "duration_s": 210.73
+  },
+  "live_migration": "PASS",
+  "monitoring": "PASS",
+  "api_workers": 2,
+  "linux": {
+    "tests": 157,
+    "skipped": 0,
+    "failed": 0,
+    "coverage_percent": 90.27586206896552,
+    "duration_s": 108.837
+  },
+  "runtime_fingerprint": [
+    "4576bdd376a2bc9d9d9ba4ad0d075263ae5a146a0729c0e9cbbb049944d220cf",
+    "sha256:802e9d4ccbf6de78d5ea6538e7351e9f54d91d63679a62b82057db9a641b80b7"
+  ]
+}

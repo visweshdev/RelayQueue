@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-06",
+  "status": "EXECUTED; ACCEPTANCE FAIL",
+  "passed": [
+    "P1",
+    "P2 measurement",
+    "P4",
+    "P5 measurement",
+    "R1",
+    "R2",
+    "R3 measurement (lower bound)",
+    "R4",
+    "R5",
+    "R6",
+    "demo",
+    "monitoring",
+    "Windows tests",
+    "Linux tests"
+  ],
+  "failed": [
+    "P3 submit latency"
+  ],
+  "not_run": [
+    "remote GitHub CI"
+  ],
+  "fingerprint": [
+    "4576bdd376a2bc9d9d9ba4ad0d075263ae5a146a0729c0e9cbbb049944d220cf",
+    "sha256:802e9d4ccbf6de78d5ea6538e7351e9f54d91d63679a62b82057db9a641b80b7"
+  ]
+}
