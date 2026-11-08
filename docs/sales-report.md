@@ -84,9 +84,10 @@ all rows must use the same currency, with no conversion, tax, refunds, or discou
 - All handler failures currently consume the configured retry budget, including invalid input.
   The demo intentionally shows this limitation. Production adapters should distinguish permanent
   validation errors from transient failures before adding expensive side effects.
-- Files and reports are stored in PostgreSQL job payloads/results and returned to any valid API
-  key holder. There is no tenant isolation, retention scheduler, encryption-at-rest setup, or
-  per-user authorization. Do not submit sensitive customer exports to a shared/public demo.
+- Files and reports are stored in PostgreSQL job payloads/results. Development keys can access
+  all queues; the [HTTPS rehearsal](local-rehearsal.md) scopes keys to a queue and enables bounded
+  retention. Neither setup provides encryption-at-rest configuration or per-user roles. Do not
+  submit sensitive customer exports to a shared/public demo.
 
 For larger files, store immutable content in object storage, enqueue a content-addressed reference,
 stream batches, and persist checkpoint progress with ownership checks. That requires a separate
