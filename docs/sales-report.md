@@ -75,7 +75,8 @@ all rows must use the same currency, with no conversion, tax, refunds, or discou
   resumable parsing checkpoint, or streaming download. Small reports can finish between polls.
 - The client uses `sales-report:v1:<sha256>` as its submission key. Identical content in the same
   queue returns the existing job. Changing formatting changes the hash. A dead or cancelled job
-  with the same key must be manually retried via the API; resubmission alone does not reset it.
+  with the same key is not reset by resubmission. Only dead jobs can be manually retried;
+  creating a replacement for a cancelled job requires a new idempotency key.
 - Execution is at least once. This handler is deterministic and has no external side effects,
   so replay computes the same report. Job completion is still guarded by the queue's lease token.
   Adding email, payment, or object-store writes requires downstream idempotency or an outbox;
