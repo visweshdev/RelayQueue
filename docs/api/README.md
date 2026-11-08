@@ -28,6 +28,10 @@ repeat rows. Invalid list arguments/cursors return 400. Unknown task/payload sch
 422, oversized payloads return 413, unconfigured queues return 400, and rate limiting returns
 429 with `Retry-After: 1`. The default per-key bucket holds 200 tokens and refills at 200/second.
 
+The isolated HTTPS gateway blocks `/health`, `/ready`, `/metrics`, and interactive API docs
+from its exposed listener. These diagnostics remain internal to that Compose network.
+See the [local HTTPS guide](../local-rehearsal.md) for access and verification.
+
 ## Example submissions and results
 
 ```sh
