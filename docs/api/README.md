@@ -11,6 +11,7 @@ payloads or secrets. Missing keys return 401. Unknown job IDs return 404.
 
 | Method / path | Behavior |
 |---|---|
+| GET `/v1/session` | Assigned tenant queue, or `null` for a development operator |
 | POST `/v1/jobs` | 201 for new jobs, 200 for an existing queue/idempotency key |
 | GET `/v1/jobs/{id}` | Full job and ordered `history` of attempts |
 | GET `/v1/jobs` | Filter by status, queue and task; newest-first cursor pagination |
