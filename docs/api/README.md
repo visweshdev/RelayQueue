@@ -18,7 +18,7 @@ payloads or secrets. Missing keys return 401. Unknown job IDs return 404.
 | POST `/v1/jobs/{id}/cancel` | 202 accepted, 409 if already terminal |
 | POST `/v1/jobs/{id}/retry` | 202 for a dead job, 409 otherwise |
 | GET `/v1/queues/stats` | Counts by status/priority and oldest ready age |
-| GET `/v1/workers` | Worker records, heartbeat, completed attempts and computed liveness |
+| GET `/v1/workers` | Worker inventory for development operators; tenant-scoped keys receive 403 |
 | GET `/health` | Unauthenticated liveness |
 | GET `/ready` | 200 if both stores respond; otherwise 503 |
 | GET `/metrics` | Unauthenticated Prometheus exposition; intended for internal access |
