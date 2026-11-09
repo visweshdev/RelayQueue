@@ -88,6 +88,8 @@ Retention defaults to dry-run unless `--apply` is supplied. Backup creates a pri
 custom-format PostgreSQL dump, restores it into a disposable network-isolated container,
 and compares job, attempt and effect counts. Pause submissions and allow active work to
 drain for this count-based verification; concurrent writes cause it to refuse verification.
+By default, dumps and their JSON verification reports are written to the ignored
+`backups/` directory. Treat dumps as private application data; do not add them to Git.
 The restore does not replace the live database. It checks restore validity and row counts,
 not byte-for-byte equality of every row or a full recovery-time objective.
 
