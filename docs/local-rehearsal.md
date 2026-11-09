@@ -20,6 +20,8 @@ is 6 units and 50.10 revenue. Job details open immediately in a dialog. Jobs, re
 creation, the API guide and interactive API documentation navigate in the same tab.
 Search and status filtering apply to loaded jobs. Loading older jobs pauses automatic
 list refresh so pagination stays intact; Refresh returns to the newest jobs.
+Live polling runs every five seconds while the tab is visible. A focused job-list
+control also pauses background list replacement so keyboard navigation stays stable.
 Open the URL rather than double-clicking `src/relayqueue/ui/index.html`; a file preview
 cannot call the API. The dashboard keeps the access key in memory and clears it on reload.
 
