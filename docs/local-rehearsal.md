@@ -27,6 +27,9 @@ cannot call the API. The dashboard keeps the access key in memory and clears it 
 [Desktop screenshot](../output/playwright/dashboard.png) |
 [Mobile screenshot](../output/playwright/dashboard-mobile.png)
 
+The **Try local demo** shortcut appears only on `localhost:8000` or `127.0.0.1:8000`.
+For the isolated HTTPS deployment, enter the appropriate workspace key instead.
+
 ## Start the isolated deployment
 
 From the repository root, with Python development dependencies installed:
