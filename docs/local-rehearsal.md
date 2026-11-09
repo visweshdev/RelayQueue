@@ -126,6 +126,14 @@ all results validated. Times include HTTP submission and result polling.
 | 3 | 2,249 | 936 ms | [JSON](../bench/results/sales-3-rows.json) |
 | 1,000 | 1,899 | 1,120 ms | [JSON](../bench/results/sales-1000-rows.json) |
 
-Reproduce with `python -m bench.sales_workload --help`. These single shared-machine runs
+With the development stack running and Python dependencies installed, reproduce each workload:
+
+```sh
+python -m bench.sales_workload --jobs 1000 --rows 3 --concurrency 16
+python -m bench.sales_workload --jobs 1000 --rows 1000 --concurrency 16
+```
+
+Each command writes its workload-specific result under `bench/results/`; preserve any
+previous result you want to compare before rerunning. These single shared-machine runs
 are not sustained-rate latency tests and do not establish the earlier 100-RPS latency SLO
 for CSV workloads. Existing noop measurements remain separately labeled.
