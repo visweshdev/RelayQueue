@@ -4,7 +4,7 @@ from typing import Any
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from forgequeue.core.models import SideEffect
+from relayqueue.core.models import SideEffect
 
 
 async def apply_once(

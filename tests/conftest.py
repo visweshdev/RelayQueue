@@ -6,9 +6,9 @@ from pathlib import Path
 import pytest
 from sqlalchemy import text
 
-from forgequeue.config import Settings
-from forgequeue.core.repo import Repository
-from forgequeue.runtime import Runtime
+from relayqueue.config import Settings
+from relayqueue.core.repo import Repository
+from relayqueue.runtime import Runtime
 
 ROOT = Path(__file__).resolve().parents[1]
 

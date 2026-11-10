@@ -2,21 +2,26 @@
 
 import os
 from random import Random
+from time import perf_counter
 from uuid import uuid4
 
 import gevent
-from locust import HttpUser, constant_throughput, task
+from locust import HttpUser, task
 
 phases = Random(42)
 
 
 class Submitter(HttpUser):
-    wait_time = constant_throughput(1)
+    def wait_time(self):
+        now = perf_counter()
+        self.next_start = max(self.next_start + 1, now)
+        return self.next_start - now
 
     def on_start(self):
         # Spread initial phases across a second instead of synchronizing every
         # user into a single recurring burst. P3 specifies a sustained rate.
         gevent.sleep(phases.random())
+        self.next_start = perf_counter()
 
     @task
     def submit(self):

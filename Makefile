@@ -11,7 +11,7 @@ types:
 unit:
 	python -m pytest tests/unit -q
 test:
-	python -m pytest tests/unit tests/integration --cov=forgequeue --cov-report=term-missing --cov-fail-under=85
+	python -m pytest tests/unit tests/integration --cov=relayqueue --cov-report=term-missing --cov-fail-under=85
 chaos:
 	RUN_CHAOS=1 python -m pytest tests/chaos -v
 bench:

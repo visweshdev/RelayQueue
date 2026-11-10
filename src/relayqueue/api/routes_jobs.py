@@ -4,18 +4,18 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 
-from forgequeue.api.auth import authenticate
-from forgequeue.api.deps import get_repo, get_runtime
-from forgequeue.api.ratelimit import submission_limit
-from forgequeue.api.schemas import (
+from relayqueue.api.auth import authenticate
+from relayqueue.api.deps import get_repo, get_runtime
+from relayqueue.api.ratelimit import submission_limit
+from relayqueue.api.schemas import (
     AttemptResponse,
     JobCreate,
     JobDetails,
     JobPage,
     JobResponse,
 )
-from forgequeue.core.repo import Repository
-from forgequeue.core.states import Status
+from relayqueue.core.repo import Repository
+from relayqueue.core.states import Status
 
 router = APIRouter(prefix="/v1/jobs", dependencies=[Depends(authenticate)])
 Repo = Annotated[Repository, Depends(get_repo)]

@@ -1,9 +1,9 @@
-name: forgequeue
+name: relayqueue
 x-app: &app
   build:
     context: .
     dockerfile: deploy/Dockerfile
-  image: forgequeue:local
+  image: relayqueue:local
   restart: unless-stopped
   environment: &environment
     DATABASE_URL: postgresql+asyncpg://fq:fq@postgres:5432/fq
@@ -76,18 +76,18 @@ services:
       retries: 5
   worker:
     <<: *app
-    command: [python, -m, forgequeue.worker.worker]
+    command: [python, -m, relayqueue.worker.worker]
     deploy:
       replicas: 4
     stop_grace_period: 40s
     healthcheck:
-      test: [CMD, python, -m, forgequeue.health]
+      test: [CMD, python, -m, relayqueue.health]
       interval: 15s
       timeout: 10s
       retries: 3
   reaper:
     <<: *app
-    command: [python, -m, forgequeue.reaper.reaper]
+    command: [python, -m, relayqueue.reaper.reaper]
     healthcheck:
       test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:9100/metrics', timeout=4)"]
       interval: 15s
@@ -106,7 +106,7 @@ services:
       GF_USERS_ALLOW_SIGN_UP: "false"
     volumes:
       - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./deploy/grafana/dashboard.json:/var/lib/grafana/dashboards/forgequeue.json:ro
+      - ./deploy/grafana/dashboard.json:/var/lib/grafana/dashboards/relayqueue.json:ro
       - grafana-data:/var/lib/grafana
     ports: ["127.0.0.1:3000:3000"]
     depends_on: [prometheus]
@@ -114,5 +114,8 @@ services:
 
 volumes:
   postgres-data:
+    name: forgequeue_postgres-data
   redis-data:
+    name: forgequeue_redis-data
   grafana-data:
+    name: forgequeue_grafana-data

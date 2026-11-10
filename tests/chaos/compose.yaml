@@ -20,7 +20,7 @@ services:
     build:
       context: ../..
       dockerfile: deploy/Dockerfile
-    image: forgequeue-chaos:local
+    image: relayqueue-chaos:local
     environment: &env
       DATABASE_URL: postgresql+asyncpg://fq:fq@postgres:5432/fq
       REDIS_URL: redis://redis:6379/0
@@ -37,7 +37,7 @@ services:
       postgres:
         condition: service_healthy
   api:
-    image: forgequeue-chaos:local
+    image: relayqueue-chaos:local
     environment: *env
     ports: ["127.0.0.1:18800:8000"]
     depends_on:
@@ -46,9 +46,9 @@ services:
       redis:
         condition: service_healthy
   worker:
-    image: forgequeue-chaos:local
+    image: relayqueue-chaos:local
     environment: *env
-    command: [python, -m, forgequeue.worker.worker]
+    command: [python, -m, relayqueue.worker.worker]
     deploy:
       replicas: 2
     depends_on:
@@ -57,9 +57,9 @@ services:
       redis:
         condition: service_healthy
   reaper:
-    image: forgequeue-chaos:local
+    image: relayqueue-chaos:local
     environment: *env
-    command: [python, -m, forgequeue.reaper.reaper]
+    command: [python, -m, relayqueue.reaper.reaper]
     depends_on:
       migrate:
         condition: service_completed_successfully

@@ -3,9 +3,9 @@ from uuid import UUID
 import structlog
 from sqlalchemy import select
 
-from forgequeue.core.models import Job
-from forgequeue.core.repo import NotFound, Repository
-from forgequeue.core.states import TERMINAL, Status
+from relayqueue.core.models import Job
+from relayqueue.core.repo import NotFound, Repository
+from relayqueue.core.states import TERMINAL, Status
 
 log = structlog.get_logger()
 

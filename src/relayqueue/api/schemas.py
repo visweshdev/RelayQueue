@@ -6,9 +6,9 @@ from uuid import UUID
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validator
 from pydantic_core import PydanticCustomError
 
-from forgequeue.core.states import Status
-from forgequeue.worker import handlers  # noqa: F401
-from forgequeue.worker.registry import registry
+from relayqueue.core.states import Status
+from relayqueue.worker import handlers  # noqa: F401
+from relayqueue.worker.registry import registry
 
 
 class JobCreate(BaseModel):

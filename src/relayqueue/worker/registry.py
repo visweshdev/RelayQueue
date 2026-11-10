@@ -4,7 +4,7 @@ from typing import Any, TypeVar
 
 from pydantic import BaseModel
 
-from forgequeue.config import Settings
+from relayqueue.config import Settings
 
 Input = TypeVar("Input", bound=BaseModel)
 

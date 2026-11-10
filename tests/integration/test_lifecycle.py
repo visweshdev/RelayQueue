@@ -5,11 +5,11 @@ from uuid import uuid4
 import pytest
 from redis.exceptions import ConnectionError as RedisConnectionError
 
-from forgequeue.api.schemas import JobCreate
-from forgequeue.core.states import Status
-from forgequeue.reaper.reaper import reap, update_gauges
-from forgequeue.reaper.reconciler import reconcile
-from forgequeue.worker.worker import Worker
+from relayqueue.api.schemas import JobCreate
+from relayqueue.core.states import Status
+from relayqueue.reaper.reaper import reap, update_gauges
+from relayqueue.reaper.reconciler import reconcile
+from relayqueue.worker.worker import Worker
 
 pytestmark = pytest.mark.integration
 
@@ -96,7 +96,7 @@ async def test_cancel_retrying_job_and_terminal_cleanup(repo):
 
 
 async def test_health_check_uses_real_worker_liveness(repo, monkeypatch):
-    from forgequeue import health
+    from relayqueue import health
 
     monkeypatch.setattr(health, "Runtime", lambda settings: repo.runtime)
     await repo.worker_heartbeat(socket.gethostname() + ":test")

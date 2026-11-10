@@ -383,66 +383,6 @@ wheels = [
 ]
 
 [[package]]
-name = "forgequeue"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "alembic" },
-    { name = "asyncpg" },
-    { name = "fastapi" },
-    { name = "httpx" },
-    { name = "prometheus-client" },
-    { name = "pydantic" },
-    { name = "pydantic-settings" },
-    { name = "redis" },
-    { name = "sqlalchemy", extra = ["asyncio"] },
-    { name = "structlog" },
-    { name = "uvicorn", extra = ["standard"] },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "locust" },
-    { name = "matplotlib" },
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "psutil" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "pytest-cov" },
-    { name = "ruff" },
-    { name = "testcontainers", extra = ["redis"] },
-    { name = "types-psutil" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "alembic", specifier = ">=1.14,<2" },
-    { name = "asyncpg", specifier = ">=0.30,<1" },
-    { name = "fastapi", specifier = ">=0.115,<1" },
-    { name = "httpx", specifier = ">=0.28,<1" },
-    { name = "locust", marker = "extra == 'dev'", specifier = ">=2.32,<3" },
-    { name = "matplotlib", marker = "extra == 'dev'", specifier = ">=3.9,<4" },
-    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.14,<2" },
-    { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=4,<5" },
-    { name = "prometheus-client", specifier = ">=0.21,<1" },
-    { name = "psutil", marker = "extra == 'dev'", specifier = ">=6,<8" },
-    { name = "pydantic", specifier = ">=2.9,<3" },
-    { name = "pydantic-settings", specifier = ">=2.5,<3" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3,<9" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.25,<1" },
-    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6,<7" },
-    { name = "redis", specifier = ">=5.2,<6" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9,<1" },
-    { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0.36,<2.1" },
-    { name = "structlog", specifier = ">=24.4,<26" },
-    { name = "testcontainers", extras = ["postgres", "redis"], marker = "extra == 'dev'", specifier = ">=4.9,<5" },
-    { name = "types-psutil", marker = "extra == 'dev'" },
-    { name = "uvicorn", extras = ["standard"], specifier = ">=0.30,<1" },
-]
-provides-extras = ["dev"]
-
-[[package]]
 name = "gevent"
 version = "26.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1201,6 +1141,66 @@ sdist = { url = "https://files.pythonhosted.org/packages/6a/cf/128b1b6d7086200c9
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7f/26/5c5fa0e83c3621db835cfc1f1d789b37e7fa99ed54423b5f519beb931aa7/redis-5.3.1-py3-none-any.whl", hash = "sha256:dc1909bd24669cc31b5f67a039700b16ec30571096c5f1f0d9d2324bff31af97", size = 272833, upload-time = "2025-07-25T08:06:26.317Z" },
 ]
+
+[[package]]
+name = "relayqueue"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "alembic" },
+    { name = "asyncpg" },
+    { name = "fastapi" },
+    { name = "httpx" },
+    { name = "prometheus-client" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "redis" },
+    { name = "sqlalchemy", extra = ["asyncio"] },
+    { name = "structlog" },
+    { name = "uvicorn", extra = ["standard"] },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "locust" },
+    { name = "matplotlib" },
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "psutil" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "pytest-cov" },
+    { name = "ruff" },
+    { name = "testcontainers", extra = ["redis"] },
+    { name = "types-psutil" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "alembic", specifier = ">=1.14,<2" },
+    { name = "asyncpg", specifier = ">=0.30,<1" },
+    { name = "fastapi", specifier = ">=0.115,<1" },
+    { name = "httpx", specifier = ">=0.28,<1" },
+    { name = "locust", marker = "extra == 'dev'", specifier = ">=2.32,<3" },
+    { name = "matplotlib", marker = "extra == 'dev'", specifier = ">=3.9,<4" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.14,<2" },
+    { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=4,<5" },
+    { name = "prometheus-client", specifier = ">=0.21,<1" },
+    { name = "psutil", marker = "extra == 'dev'", specifier = ">=6,<8" },
+    { name = "pydantic", specifier = ">=2.9,<3" },
+    { name = "pydantic-settings", specifier = ">=2.5,<3" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3,<9" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.25,<1" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6,<7" },
+    { name = "redis", specifier = ">=5.2,<6" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9,<1" },
+    { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0.36,<2.1" },
+    { name = "structlog", specifier = ">=24.4,<26" },
+    { name = "testcontainers", extras = ["postgres", "redis"], marker = "extra == 'dev'", specifier = ">=4.9,<5" },
+    { name = "types-psutil", marker = "extra == 'dev'" },
+    { name = "uvicorn", extras = ["standard"], specifier = ">=0.30,<1" },
+]
+provides-extras = ["dev"]
 
 [[package]]
 name = "requests"

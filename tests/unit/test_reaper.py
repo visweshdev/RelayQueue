@@ -2,8 +2,8 @@ import asyncio
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
-from forgequeue.config import Settings
-from forgequeue.reaper import reaper
+from relayqueue.config import Settings
+from relayqueue.reaper import reaper
 
 
 async def test_slow_reconstruction_cannot_block_recovery_or_scheduler(monkeypatch):

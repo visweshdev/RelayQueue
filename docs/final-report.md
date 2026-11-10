@@ -1,7 +1,7 @@
 # RelayQueue engineering report
 
-Evaluated 2026-11-06. Implementation and local validation are delivered. Full acceptance is
-**not achieved**: P3 latency fails on this machine. Remote GitHub CI
+Updated 2026-11-10. Implementation and local validation are delivered. Full acceptance is
+**not fully achieved**: the corrected P3 test passes on November 10. Remote GitHub CI
 is NOT RUN because this workspace has no Git repository/remote. No production-readiness claim.
 
 ## Implementation and repository
@@ -10,11 +10,11 @@ FastAPI commits accepted jobs to PostgreSQL before publishing Redis indexes. Ind
 claim through Lua, validate durable ownership, execute typed handlers, and record fenced outcomes.
 Independent scheduler, expiry recovery, reconciliation and metrics loops repair partial failures.
 
-- `src/forgequeue/api`: authenticated routes, validation, rate limiting, cursors and metrics.
-- `src/forgequeue/core`: durable state machine, models, repository, retries and effect ledger.
-- `src/forgequeue/broker`: Redis adapter and six atomic Lua scripts.
-- `src/forgequeue/worker`: handlers, bounded execution, heartbeat and graceful shutdown.
-- `src/forgequeue/reaper`: scheduling, recovery, reconciliation and gauges.
+- `src/relayqueue/api`: authenticated routes, validation, rate limiting, cursors and metrics.
+- `src/relayqueue/core`: durable state machine, models, repository, retries and effect ledger.
+- `src/relayqueue/broker`: Redis adapter and six atomic Lua scripts.
+- `src/relayqueue/worker`: handlers, bounded execution, heartbeat and graceful shutdown.
+- `src/relayqueue/reaper`: scheduling, recovery, reconciliation and gauges.
 - `migrations`, `deploy`, `compose.yaml`: schema, containers and monitoring provisioning.
 - `tests`, `bench`, `.github/workflows`: tests, reproducible measurements and CI configuration.
 - `docs`: architecture, design decisions, PRD matrix, acceptance and evidence.
@@ -42,7 +42,7 @@ python -m pip install --no-deps -e .
 python -m ruff check src tests bench migrations
 python -m ruff format --check src tests bench migrations
 python -m mypy --strict src
-python -m pytest tests/unit tests/integration --cov=forgequeue --cov-fail-under=85
+python -m pytest tests/unit tests/integration --cov=relayqueue --cov-fail-under=85
 ```
 
 Set `REQUIRE_DOCKER=1` to fail rather than skip when Docker is unavailable. Set `RUN_CHAOS=1`
@@ -54,7 +54,7 @@ before `python -m pytest tests/chaos -v`. These fixtures use isolated disposable
 |---|---|---|
 | P1: 20,000 noop jobs / four workers | >=1,000 jobs/min | PASS: 4,521.405 jobs/min; all succeeded |
 | P2: 1/2/4/8 workers | Close to linear from 1 to 4 | PASS (measurement): 3.26x speedup, 81.4% of ideal; qualitative target has no tolerance |
-| P3: 100 requests/s for 300 s | p95 <50 ms; p99 <100 ms | FAIL: 99.856 RPS, p95 630 ms, p99 910 ms; zero failures |
+| P3: 100 requests/s for 300 s | p95 <50 ms; p99 <100 ms | PASS: 100.000 RPS, p95 35 ms, p99 50 ms; zero failures (November 10) |
 | P4: 100 idle samples | p95 <200 ms | PASS: p95 10.721 ms |
 | P5: step load | Report first p95 >100 ms | PASS (measurement): already exceeded at 25 target RPS; threshold <=25 RPS |
 
@@ -118,14 +118,14 @@ Invoke-RestMethod http://localhost:8000/ready
 $headers = @{ 'X-API-Key' = 'dev-key-1' }
 $job = Invoke-RestMethod http://localhost:8000/v1/jobs -Method Post -Headers $headers -ContentType application/json -Body '{"task":"noop"}'
 Invoke-RestMethod "http://localhost:8000/v1/jobs/$($job.id)" -Headers $headers
-docker build -f deploy/Dockerfile.bench -t forgequeue-bench:local .
+docker build -f deploy/Dockerfile.bench -t relayqueue-bench:local .
 python -m bench.acceptance --resume
 ```
 
 Use `.venv\Scripts\python.exe` if the default Python is not 3.12. On this host prepend
 `$env:LOCALAPPDATA\Programs\DockerDesktop\resources\bin` to PATH for Docker.
-[API docs](http://localhost:8000/docs), [Grafana](http://localhost:3000/d/forgequeue/forge-queue)
-(local login `admin` / `forgequeue-local`), [Prometheus](http://localhost:9090).
+[API docs](http://localhost:8000/docs), [Grafana](http://localhost:3000/d/relayqueue/relayqueue)
+(local login `admin` / the configured `GRAFANA_PASSWORD`), [Prometheus](http://localhost:9090).
 The campaign can take around an hour and intentionally disrupts this local demo stack.
 
 ## Deliverables and remaining work
@@ -133,17 +133,36 @@ The campaign can take around an hour and intentionally disrupts this local demo 
 [Real 20-second demo GIF](../bench/results/demo.gif) and its
 [timestamped event log](../bench/results/demo-recording.json) account for 25 jobs: 24 succeeded,
 one deliberately dead. The killed owner's history confirms lease expiry then successful retry.
-[Actual Grafana screenshot](../output/playwright/grafana.png), measured scaling chart, raw JSON,
+[Grafana dashboard (AI-rebranded historical illustration)](../output/playwright/grafana.png), measured scaling chart, raw JSON,
 Locust CSV and source/image fingerprints are included. The refreshed November 6 screenshot shows
 the scaling history and return to four workers. Failure-event panels have no samples during
 that successful-workload window.
 
-Remaining acceptance work is explicit: profile end-to-end submit transactions/connection pools,
-reduce safe coordination/query overhead, rerun P3 and 1-to-4-worker P2, and execute the configured
-CI in a real GitHub repository. No remote was invented or published. There is no job retention
+Remaining acceptance work: execute the configured CI in a real GitHub repository. No remote was invented or published. There is no job retention
 policy, Redis clustering, multiregion operation or tenant isolation. External effects require
 downstream idempotency; operational metrics may lose unscraped events on crashes. PostgreSQL
 backup/restore operations and deployment-specific production security are outside this local build.
 
 Final runtime source SHA256: `4576bdd376a2bc9d9d9ba4ad0d075263ae5a146a0729c0e9cbbb049944d220cf`.
 Image: `sha256:802e9d4ccbf6de78d5ea6538e7351e9f54d91d63679a62b82057db9a641b80b7`.
+
+
+## RelayQueue update — November 10
+
+The package, imports, entry points, API title and dashboard title now use RelayQueue/`relayqueue`.
+Docker project/image/network identifiers and dashboard UID use `relayqueue`.
+The renamed Compose project reuses existing named volumes to preserve stored data. Database tables and migration IDs are unchanged. Historical
+charts and demo recordings are rendered from the original data with RelayQueue branding. The historical dashboard image was AI-edited for RelayQueue branding and is illustrative; use the raw benchmark results for exact measurements and source fingerprints.
+
+The final 300-second corrected P3 run achieved 100.000 RPS, p95 35 ms, p99 50 ms, zero failures.
+See [raw result](../bench/results/latency-relayqueue-p3.json).
+The earlier Locust pacing initialized its clock before startup jitter, cancelling that jitter
+and synchronizing clients on later requests. The corrected per-client monotonic schedule keeps
+phases spread, includes request time, and avoids catch-up bursts after overruns. Earlier 630 ms
+P3 and P5 results describe burst-shaped load; they are retained, not relabeled as sustained tests.
+The API also uses Uvicorn standard runtime dependencies and an async repository dependency.
+No synchronous-commit, fsync, ownership or durability guarantees were weakened. Default API
+process count remains two. The benchmark correction is the main observed improvement; the
+35 ms result must not be represented as a 630-to-35 ms server-only optimization.
+
+Remaining external gate: execute the configured workflow in a real GitHub repository.

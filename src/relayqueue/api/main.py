@@ -11,13 +11,13 @@ from sqlalchemy.exc import SQLAlchemyError
 from starlette.exceptions import HTTPException
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
-from forgequeue.api import routes_admin, routes_jobs
-from forgequeue.api.schemas import ErrorResponse
-from forgequeue.config import Settings
-from forgequeue.core.repo import Conflict, NotFound
-from forgequeue.obs.logging import configure_logging
-from forgequeue.obs.metrics import HTTP
-from forgequeue.runtime import Runtime
+from relayqueue.api import routes_admin, routes_jobs
+from relayqueue.api.schemas import ErrorResponse
+from relayqueue.config import Settings
+from relayqueue.core.repo import Conflict, NotFound
+from relayqueue.obs.logging import configure_logging
+from relayqueue.obs.metrics import HTTP
+from relayqueue.runtime import Runtime
 
 log = structlog.get_logger()
 

@@ -29,7 +29,7 @@ Implementation presence and execution evidence are distinct. NOT RUN never means
 | 8: static keys and 200/s token bucket | auth, ratelimit.lua | auth unit; burst/refill/key-isolation/429 integration | PASS; rate-limit integration tests |
 | 9: environment defaults and timing validation | config, env example, Compose | settings unit tests | PASS, invalid/non-finite values rejected |
 | 10: centralized state transitions | core/states | all 56 state pairs plus manual-retry gate | PASS |
-| 11: P1-P5 and R1-R6 | bench throughput/scaling/latency/chaos/reliability | CLI/package checks; final-image campaign JSON/CSV/chart | Executed; P3 FAIL, other measurements PASS; see acceptance report |
+| 11: P1-P5 and R1-R6 | bench throughput/scaling/latency/chaos/reliability | CLI/package checks; final-image campaign JSON/CSV/chart | P3 corrected sustained test PASS November 10; other measurements are historical; see acceptance report |
 | 12: unit/integration/chaos, >=85% | tests and CI gate | final pytest run | 157 passed, no skips; Windows combined coverage 89.93%; Linux also passes |
 | 13: nine metrics, JSON logs, process scrapes | obs, worker HTTP, Prometheus DNS | API metrics unit, bench.monitoring | PASS; six healthy targets including four workers |
 | 13: Grafana panels/screenshot | dashboard JSON and provisioning | JSON parse, live verifier | PASS; eight live panels, output/playwright/grafana.png |

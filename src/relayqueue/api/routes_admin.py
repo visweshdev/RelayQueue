@@ -4,10 +4,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from prometheus_client import CONTENT_TYPE_LATEST, CollectorRegistry, generate_latest, multiprocess
 
-from forgequeue.api.auth import authenticate
-from forgequeue.api.deps import get_repo, get_runtime
-from forgequeue.api.schemas import Health, QueueStat, WorkerResponse
-from forgequeue.core.repo import Repository
+from relayqueue.api.auth import authenticate
+from relayqueue.api.deps import get_repo, get_runtime
+from relayqueue.api.schemas import Health, QueueStat, WorkerResponse
+from relayqueue.core.repo import Repository
 
 router = APIRouter()
 Repo = Annotated[Repository, Depends(get_repo)]

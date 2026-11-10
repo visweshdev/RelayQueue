@@ -20,7 +20,7 @@ async def main():
                     break
                 await asyncio.sleep(2)
         dashboard = await client.get(
-            "http://localhost:3000/api/dashboards/uid/forgequeue",
+            "http://localhost:3000/api/dashboards/uid/relayqueue",
             auth=("admin", os.getenv("GRAFANA_PASSWORD", "forgequeue-local")),
         )
         dashboard.raise_for_status()
@@ -30,7 +30,7 @@ async def main():
             {
                 "healthy_targets": len(targets),
                 "worker_targets": len(workers),
-                "dashboard_uid": "forgequeue",
+                "dashboard_uid": "relayqueue",
                 "verified": True,
             },
         )

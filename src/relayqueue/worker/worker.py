@@ -8,12 +8,12 @@ from uuid import uuid4
 import structlog
 from prometheus_client import start_http_server
 
-from forgequeue.config import Settings
-from forgequeue.core.models import Job
-from forgequeue.core.repo import Repository
-from forgequeue.obs.logging import configure_logging
-from forgequeue.runtime import Runtime
-from forgequeue.worker.runner import Outcome, run_handler
+from relayqueue.config import Settings
+from relayqueue.core.models import Job
+from relayqueue.core.repo import Repository
+from relayqueue.obs.logging import configure_logging
+from relayqueue.runtime import Runtime
+from relayqueue.worker.runner import Outcome, run_handler
 
 log = structlog.get_logger()
 

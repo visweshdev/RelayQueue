@@ -13,7 +13,7 @@ python -m ruff check src tests bench migrations
 python -m ruff format --check src tests bench migrations
 python -m mypy --strict src
 python -m pytest tests/unit -q
-python -m pytest tests/unit tests/integration --cov=forgequeue --cov-report=term-missing --cov-report=xml --cov-fail-under=85
+python -m pytest tests/unit tests/integration --cov=relayqueue --cov-report=term-missing --cov-report=xml --cov-fail-under=85
 ```
 
 Without Docker, integration tests explicitly skip. Set `REQUIRE_DOCKER=1` to fail instead; CI
@@ -72,7 +72,7 @@ If Docker Desktop is installed per user but absent from the current shell PATH:
 $env:PATH = "$env:LOCALAPPDATA\Programs\DockerDesktop\resources\bin;$env:PATH"
 $env:DOCKER_HOST = 'npipe:////./pipe/dockerDesktopLinuxEngine'
 $env:REQUIRE_DOCKER = '1'
-.venv\Scripts\python.exe -m pytest tests/unit tests/integration --cov=forgequeue --cov-fail-under=85
+.venv\Scripts\python.exe -m pytest tests/unit tests/integration --cov=relayqueue --cov-fail-under=85
 ```
 
 `python -m bench.record_demo` captures actual stdout with monotonic timestamps into
@@ -89,7 +89,7 @@ network as the services. On this Windows host, batches of 32 health requests too
 run. Those preliminary runs were interrupted and are not reported as complete benchmarks.
 
 ```sh
-docker build -f deploy/Dockerfile.bench -t forgequeue-bench:local .
+docker build -f deploy/Dockerfile.bench -t relayqueue-bench:local .
 python -m bench.scaling --jobs 20000 --container-client
 python -m bench.latency --rates 100 --seconds 300 --output latency-p3.json --container-client
 python -m bench.latency --rates 25,50,150,200 --seconds 60 --output latency-p5.json --container-client
@@ -99,7 +99,7 @@ Scaling runs the same P1 workload at 1/2/4/8 workers; `scaling-4.json` is the fo
 measurement. The generator uses the pinned development dependencies, calls `http://api:8000`,
 and mounts only the results directory. Docker control remains on the host. Results retain host
 CPU/RAM, Docker allocation, runtime image ID, source digest, and the load-generator OS/Python.
-The default network is `forgequeue_default`; override `BENCH_DOCKER_NETWORK` for another name.
+The default network is `relayqueue_default`; override `BENCH_DOCKER_NETWORK` for another name.
 Rebuild the benchmark image after editing its Python files. Host-mode commands remain available.
 P3 is a full five-minute run; P5 uses sixty-second steps and reports actual achieved rates and errors.
 
@@ -126,7 +126,7 @@ GitHub Actions result. The fixture starts isolated PostgreSQL/Redis containers t
 Docker socket; it does not truncate the application database.
 
 ```powershell
-docker run --rm --mount "type=bind,source=$($PWD.Path),target=/workspace" --mount "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock" --workdir /workspace --env PYTHONPATH=/workspace/src --env REQUIRE_DOCKER=1 --env TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal forgequeue-bench:local python -m pytest tests/unit tests/integration -q --cov=forgequeue --cov-report=json:tmp/linux-coverage.json --junitxml=tmp/linux-test-results.xml --cov-fail-under=85
+docker run --rm --mount "type=bind,source=$($PWD.Path),target=/workspace" --mount "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock" --workdir /workspace --env PYTHONPATH=/workspace/src --env REQUIRE_DOCKER=1 --env TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal relayqueue-bench:local python -m pytest tests/unit tests/integration -q --cov=relayqueue --cov-report=json:tmp/linux-coverage.json --junitxml=tmp/linux-test-results.xml --cov-fail-under=85
 ```
 
 On native Linux, use the normal host test command above instead of the Docker Desktop

@@ -9,7 +9,7 @@ from urllib.parse import urlsplit
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl
 
-from forgequeue.worker.registry import Context, registry
+from relayqueue.worker.registry import Context, registry
 
 
 class Payload(BaseModel):
@@ -29,7 +29,7 @@ class FlakyInput(Payload):
 
 
 class HashInput(Payload):
-    buffer: str = Field(default="forgequeue", max_length=32768)
+    buffer: str = Field(default="relayqueue", max_length=32768)
     iterations: int = Field(default=10_000, ge=1, le=1_000_000_000)
 
 
@@ -76,7 +76,7 @@ async def cpu_hash(payload: HashInput, context: Context) -> BaseModel:
     process = await asyncio.create_subprocess_exec(
         sys.executable,
         "-m",
-        "forgequeue.worker.hash_process",
+        "relayqueue.worker.hash_process",
         str(os.getpid()),
         str(context.timeout_s),
         stdin=asyncio.subprocess.PIPE,

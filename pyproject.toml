@@ -3,7 +3,7 @@ requires = ["hatchling>=1.26"]
 build-backend = "hatchling.build"
 
 [project]
-name = "forgequeue"
+name = "relayqueue"
 version = "0.1.0"
 description = "A PostgreSQL-authoritative distributed job queue with Redis leases"
 requires-python = ">=3.12,<3.13"
@@ -21,11 +21,11 @@ dev = ["pytest>=8.3,<9", "pytest-asyncio>=0.25,<1", "pytest-cov>=6,<7",
        "psutil>=6,<8", "types-psutil", "pre-commit>=4,<5"]
 
 [project.scripts]
-forgequeue-worker = "forgequeue.worker.worker:main"
-forgequeue-reaper = "forgequeue.reaper.reaper:main"
+relayqueue-worker = "relayqueue.worker.worker:main"
+relayqueue-reaper = "relayqueue.reaper.reaper:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/forgequeue"]
+packages = ["src/relayqueue"]
 
 [tool.ruff]
 target-version = "py312"
@@ -47,7 +47,7 @@ testpaths = ["tests"]
 markers = ["integration: real PostgreSQL and Redis", "chaos: Docker process failure tests", "slow: long running test"]
 
 [tool.coverage.run]
-source = ["forgequeue"]
+source = ["relayqueue"]
 branch = true
 
 [tool.coverage.report]

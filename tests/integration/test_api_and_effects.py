@@ -5,11 +5,11 @@ import httpx
 import pytest
 from sqlalchemy import select, update
 
-from forgequeue.api.main import create_app
-from forgequeue.core.effects import apply_once
-from forgequeue.core.models import SideEffect, WorkerRecord
-from forgequeue.core.repo import Repository
-from forgequeue.reaper.reaper import update_gauges
+from relayqueue.api.main import create_app
+from relayqueue.core.effects import apply_once
+from relayqueue.core.models import SideEffect, WorkerRecord
+from relayqueue.core.repo import Repository
+from relayqueue.reaper.reaper import update_gauges
 
 pytestmark = pytest.mark.integration
 

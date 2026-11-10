@@ -2,8 +2,8 @@ from redis.asyncio import Redis
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from forgequeue.broker.redis_broker import Broker
-from forgequeue.config import Settings
+from relayqueue.broker.redis_broker import Broker
+from relayqueue.config import Settings
 
 
 class Runtime:

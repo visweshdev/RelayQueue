@@ -2,8 +2,8 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request
 
-from forgequeue.api.auth import authenticate
-from forgequeue.api.deps import get_runtime
+from relayqueue.api.auth import authenticate
+from relayqueue.api.deps import get_runtime
 
 
 async def submission_limit(request: Request, key: Annotated[str, Depends(authenticate)]) -> None:

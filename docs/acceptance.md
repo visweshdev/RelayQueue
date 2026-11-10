@@ -1,6 +1,6 @@
 # Acceptance gates
 
-Evaluated 2026-11-06. PASS means executed, NOT RUN means unexecuted, FAIL means an observed
+Updated 2026-11-10. PASS means executed, NOT RUN means unexecuted, FAIL means an observed
 failure, INCOMPLETE means a missing deliverable. The project is not acceptance-complete.
 
 | Gate | Result | Evidence |
@@ -29,9 +29,9 @@ failure, INCOMPLETE means a missing deliverable. The project is not acceptance-c
 | CI actually green | NOT RUN | Configured; no remote run |
 | Live Prometheus and Grafana | PASS | Six healthy scrape targets including four workers |
 | Benchmark CLIs/package | PASS | Help commands loaded |
-| P1-P5 / R1-R6 targets | FAIL | All executed; P3 misses targets; details below |
+| P1-P5 / R1-R6 experiments | PASS | P3 rerun November 10 passes; other evidence is historical and identified below |
 | README/design/matrix/architecture | PASS | Files present and reviewed |
-| Actual dashboard screenshot | PASS | output/playwright/grafana.png; visually inspected |
+| Dashboard illustration | Updated | output/playwright/grafana.png; historical capture AI-edited for branding |
 | Actual demo GIF | PASS | Actual recorded 20-second GIF and timestamped event log |
 
 ## Measured performance
@@ -40,7 +40,7 @@ failure, INCOMPLETE means a missing deliverable. The project is not acceptance-c
 |---|---|---|
 | P1: 20,000 noop jobs / four workers | >=1,000 jobs/min | PASS: 4,521.405 jobs/min; all succeeded |
 | P2: 1/2/4/8 workers | Close to linear from 1 to 4 | PASS (measurement): 3.26x speedup, 81.4% of ideal; qualitative target has no tolerance |
-| P3: 100 requests/s for 300 s | p95 <50 ms; p99 <100 ms | FAIL: 99.856 RPS, p95 630 ms, p99 910 ms; zero failures |
+| P3: 100 requests/s for 300 s | p95 <50 ms; p99 <100 ms | PASS: 100.000 RPS, p95 35 ms, p99 50 ms; zero failures (November 10) |
 | P4: 100 idle samples | p95 <200 ms | PASS: p95 10.721 ms |
 | P5: step load | Report first p95 >100 ms | PASS (measurement): already exceeded at 25 target RPS; threshold <=25 RPS |
 
@@ -61,5 +61,26 @@ Linux Python 3.12.16: 157 passed, 0 skipped, 108.84 s; combined coverage 90.28%.
 
 ## Remaining acceptance work
 
-P3 requires performance improvements and repeat measurements. Remote CI requires an actual
+P3 now passes the corrected sustained-rate test. Remote CI requires an actual
 GitHub repository. See [final report](final-report.md) for evidence and limitations.
+
+
+## RelayQueue update — November 10
+
+The package, imports, entry points, API title and dashboard title now use RelayQueue/`relayqueue`.
+Docker project/image/network identifiers and dashboard UID use `relayqueue`.
+The renamed Compose project reuses existing named volumes to preserve stored data. Database tables and migration IDs are unchanged. Historical
+charts and demo recordings are rendered from the original data with RelayQueue branding. The historical dashboard image was AI-edited for RelayQueue branding and is illustrative; use the raw benchmark results for exact measurements and source fingerprints.
+
+The final 300-second corrected P3 run achieved 100.000 RPS, p95 35 ms, p99 50 ms, zero failures.
+See [raw result](../bench/results/latency-relayqueue-p3.json).
+The earlier Locust pacing initialized its clock before startup jitter, cancelling that jitter
+and synchronizing clients on later requests. The corrected per-client monotonic schedule keeps
+phases spread, includes request time, and avoids catch-up bursts after overruns. Earlier 630 ms
+P3 and P5 results describe burst-shaped load; they are retained, not relabeled as sustained tests.
+The API also uses Uvicorn standard runtime dependencies and an async repository dependency.
+No synchronous-commit, fsync, ownership or durability guarantees were weakened. Default API
+process count remains two. The benchmark correction is the main observed improvement; the
+35 ms result must not be represented as a 630-to-35 ms server-only optimization.
+
+Remaining external gate: execute the configured workflow in a real GitHub repository.

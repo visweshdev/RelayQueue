@@ -4,8 +4,8 @@ from uuid import uuid4
 
 import pytest
 
-from forgequeue.config import Settings
-from forgequeue.worker.worker import Worker
+from relayqueue.config import Settings
+from relayqueue.worker.worker import Worker
 
 
 @pytest.mark.parametrize("stale_first_claim", [False, True])

@@ -7,11 +7,11 @@ from uuid import uuid4
 import pytest
 from pydantic import ValidationError
 
-from forgequeue.api.schemas import JobCreate
-from forgequeue.config import Settings
-from forgequeue.core.backoff import retry_delay
-from forgequeue.core.cursors import decode_cursor, encode_cursor
-from forgequeue.core.states import InvalidTransition, Status, transition
+from relayqueue.api.schemas import JobCreate
+from relayqueue.config import Settings
+from relayqueue.core.backoff import retry_delay
+from relayqueue.core.cursors import decode_cursor, encode_cursor
+from relayqueue.core.states import InvalidTransition, Status, transition
 
 # Independent specification, not imported from the implementation transition table.
 LEGAL = {

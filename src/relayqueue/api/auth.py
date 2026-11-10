@@ -3,7 +3,7 @@ from typing import Annotated
 
 from fastapi import Header, HTTPException, Request
 
-from forgequeue.api.deps import get_runtime
+from relayqueue.api.deps import get_runtime
 
 
 async def authenticate(request: Request, x_api_key: Annotated[str | None, Header()] = None) -> str:

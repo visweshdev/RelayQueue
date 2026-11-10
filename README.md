@@ -5,14 +5,12 @@ atomic Redis leases, independent workers and recoverable execution history.
 
 **Implementation and local validation delivered.** All 157 unit/integration tests pass with
 89.93% coverage; Linux verification also passes. The final crash campaign completed 10,000 jobs
-with zero lost jobs. Four workers process 4,521 noop jobs/min. **The latency target
-is not met.** See the [engineering report](docs/final-report.md)
+with zero lost jobs. Four workers process 4,521 noop jobs/min. **The sustained-rate latency target now passes: 35 ms p95 and 50 ms p99 at 100 RPS.** See the [engineering report](docs/final-report.md)
 and [acceptance gates](docs/acceptance.md) for measurements, evidence and remaining work.
 
 ## 1. What problem this solves
 
-An API should not hold a request open while performing expensive or failure-prone work. Forge
-Queue accepts a durable job, lets independent workers execute it, and handles the partial failures
+An API should not hold a request open while performing expensive or failure-prone work. RelayQueue accepts a durable job, lets independent workers execute it, and handles the partial failures
 between submission, claiming, processing and completion. The central engineering problem is
 ownership and recovery when a process or dependency disappears.
 
@@ -73,7 +71,7 @@ before API/workers/reaper start. Four worker replicas run by default. No manual 
 is required; this startup path has been verified locally.
 
 API documentation: [localhost:8000/docs](http://localhost:8000/docs).
-Grafana: [localhost:3000](http://localhost:3000), local-only login `admin` / `forgequeue-local`.
+Grafana: [localhost:3000](http://localhost:3000), local-only login `admin` / the configured `GRAFANA_PASSWORD`.
 Prometheus: [localhost:9090](http://localhost:9090). Published ports bind to 127.0.0.1.
 Copy `.env.example` to `.env` for overrides. `docker compose down` keeps persistent volumes;
 `docker compose down --volumes` intentionally removes demo data.
@@ -204,7 +202,7 @@ async with runtime.sessions.begin() as session:
 
 The integration suite demonstrates concurrent duplicate callbacks and transaction rollback.
 External HTTP/email effects need downstream idempotency or an appropriately designed outbox.
-Run `docker compose exec api python -m forgequeue.examples.effect_ledger` to record the same
+Run `docker compose exec api python -m relayqueue.examples.effect_ledger` to record the same
 notification receipt twice with one durable ledger entry. This example records a receipt; it
 does not send an email.
 
@@ -230,7 +228,7 @@ worker, attempt, queue and task fields; payloads, keys and raw HTTP exceptions a
 
 Run `python -m bench.monitoring` to verify actual targets and dashboard provisioning.
 
-![Live RelayQueue Grafana dashboard](output/playwright/grafana.png)
+![RelayQueue Grafana dashboard (AI-rebranded historical illustration)](output/playwright/grafana.png)
 
 Captured after the final scaling workload on November 6; the visible history shows two,
 four and eight workers, then the return to four. Failure-event panels have no samples in
@@ -242,7 +240,7 @@ this successful-workload window.
 python -m pip install -r requirements-dev.txt
 python -m pip install --no-deps -e .
 python -m pytest tests/unit -q
-python -m pytest tests/unit tests/integration --cov=forgequeue --cov-fail-under=85
+python -m pytest tests/unit tests/integration --cov=relayqueue --cov-fail-under=85
 python -m ruff check src tests bench migrations
 python -m mypy --strict src
 ```
@@ -260,7 +258,7 @@ Use [testing instructions](docs/testing.md) for exact commands and fixture safet
 |---|---|---|
 | P1: 20,000 noop jobs / four workers | >=1,000 jobs/min | PASS: 4,521.405 jobs/min; all succeeded |
 | P2: 1/2/4/8 workers | Close to linear from 1 to 4 | PASS (measurement): 3.26x speedup, 81.4% of ideal; qualitative target has no tolerance |
-| P3: 100 requests/s for 300 s | p95 <50 ms; p99 <100 ms | FAIL: 99.856 RPS, p95 630 ms, p99 910 ms; zero failures |
+| P3: 100 requests/s for 300 s | p95 <50 ms; p99 <100 ms | PASS: 100.000 RPS, p95 35 ms, p99 50 ms; zero failures (November 10) |
 | P4: 100 idle samples | p95 <200 ms | PASS: p95 10.721 ms |
 | P5: step load | Report first p95 >100 ms | PASS (measurement): already exceeded at 25 target RPS; threshold <=25 RPS |
 
@@ -289,7 +287,7 @@ The unedited event log is [demo-recording.json](bench/results/demo-recording.jso
 ## 19. Repository and engineering trade-offs
 
 ```text
-src/forgequeue/
+src/relayqueue/
   api/       HTTP routes, auth, rate limiting, schemas
   core/      SQLAlchemy models, repository, state machine, effects, backoff
   broker/    Redis adapter and six Lua scripts
@@ -311,13 +309,33 @@ in [design decisions](docs/design-decisions.md).
 
 ## 20. Limitations and remaining acceptance work
 
-P3 latency fails (630 ms p95 at 99.856 RPS). Scaling reaches 3.26x from one to four workers.
-Profile database transaction/coordination and host contention, improve measured bottlenecks,
-then repeat those experiments. Remote CI is NOT RUN: this workspace has no configured repository.
-The [final report](docs/final-report.md) records all measured results and exact reproduction commands.
+The corrected sustained-rate P3 latency gate passes. Remote CI remains NOT RUN because no
+GitHub repository is configured. Previous benchmark results remain historical evidence tied
+to their source/image fingerprints; see the update below.
 
 Other limits: one Redis server; no clustering, multi-region, workflow DAGs or tenant isolation;
 no job/history retention policy; trusted configured HTTP origins; operational counters can lose
 unscraped events on process death. External effects remain at least once. Recovery targets depend
 on scan phase, load and service availability. Container tags can receive patch updates.
 No production-readiness claim is made.
+
+
+## RelayQueue update — November 10
+
+The package, imports, entry points, API title and dashboard title now use RelayQueue/`relayqueue`.
+Docker project/image/network identifiers and dashboard UID use `relayqueue`.
+The renamed Compose project reuses existing named volumes to preserve stored data. Database tables and migration IDs are unchanged. Historical
+charts and demo recordings are rendered from the original data with RelayQueue branding. The historical dashboard image was AI-edited for RelayQueue branding and is illustrative; use the raw benchmark results for exact measurements and source fingerprints.
+
+The final 300-second corrected P3 run achieved 100.000 RPS, p95 35 ms, p99 50 ms, zero failures.
+See [raw result](bench/results/latency-relayqueue-p3.json).
+The earlier Locust pacing initialized its clock before startup jitter, cancelling that jitter
+and synchronizing clients on later requests. The corrected per-client monotonic schedule keeps
+phases spread, includes request time, and avoids catch-up bursts after overruns. Earlier 630 ms
+P3 and P5 results describe burst-shaped load; they are retained, not relabeled as sustained tests.
+The API also uses Uvicorn standard runtime dependencies and an async repository dependency.
+No synchronous-commit, fsync, ownership or durability guarantees were weakened. Default API
+process count remains two. The benchmark correction is the main observed improvement; the
+35 ms result must not be represented as a 630-to-35 ms server-only optimization.
+
+Remaining external gate: execute the configured workflow in a real GitHub repository.

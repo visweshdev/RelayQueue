@@ -6,14 +6,14 @@ from collections.abc import Awaitable, Callable
 import structlog
 from prometheus_client import start_http_server
 
-from forgequeue.config import Settings
-from forgequeue.core.repo import Repository
-from forgequeue.core.states import Status
-from forgequeue.obs import metrics
-from forgequeue.obs.logging import configure_logging
-from forgequeue.reaper.reconciler import reconcile
-from forgequeue.reaper.scheduler import promote_due
-from forgequeue.runtime import Runtime
+from relayqueue.config import Settings
+from relayqueue.core.repo import Repository
+from relayqueue.core.states import Status
+from relayqueue.obs import metrics
+from relayqueue.obs.logging import configure_logging
+from relayqueue.reaper.reconciler import reconcile
+from relayqueue.reaper.scheduler import promote_due
+from relayqueue.runtime import Runtime
 
 log = structlog.get_logger()
 

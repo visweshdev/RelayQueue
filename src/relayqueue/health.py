@@ -1,9 +1,9 @@
 import asyncio
 import socket
 
-from forgequeue.config import Settings
-from forgequeue.core.repo import Repository
-from forgequeue.runtime import Runtime
+from relayqueue.config import Settings
+from relayqueue.core.repo import Repository
+from relayqueue.runtime import Runtime
 
 
 async def check() -> None:

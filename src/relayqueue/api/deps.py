@@ -2,8 +2,8 @@ from typing import cast
 
 from fastapi import Request
 
-from forgequeue.core.repo import Repository
-from forgequeue.runtime import Runtime
+from relayqueue.core.repo import Repository
+from relayqueue.runtime import Runtime
 
 
 def get_runtime(request: Request) -> Runtime:

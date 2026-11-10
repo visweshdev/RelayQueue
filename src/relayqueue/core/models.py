@@ -20,7 +20,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-from forgequeue.core.states import Status
+from relayqueue.core.states import Status
 
 
 def utcnow() -> datetime:

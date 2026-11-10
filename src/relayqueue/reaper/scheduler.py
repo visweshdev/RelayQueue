@@ -1,4 +1,4 @@
-from forgequeue.core.repo import Repository
+from relayqueue.core.repo import Repository
 
 
 async def promote_due(repo: Repository) -> int:

@@ -10,14 +10,14 @@ from sqlalchemy import func, literal, select, tuple_, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from forgequeue.api.schemas import JobCreate
-from forgequeue.core.backoff import retry_delay
-from forgequeue.core.cursors import decode_cursor, encode_cursor
-from forgequeue.core.models import Attempt, Job, WorkerRecord
-from forgequeue.core.states import TERMINAL, Status, transition
-from forgequeue.obs import metrics
-from forgequeue.runtime import Runtime
-from forgequeue.worker.runner import Outcome
+from relayqueue.api.schemas import JobCreate
+from relayqueue.core.backoff import retry_delay
+from relayqueue.core.cursors import decode_cursor, encode_cursor
+from relayqueue.core.models import Attempt, Job, WorkerRecord
+from relayqueue.core.states import TERMINAL, Status, transition
+from relayqueue.obs import metrics
+from relayqueue.runtime import Runtime
+from relayqueue.worker.runner import Outcome
 
 log = structlog.get_logger()
 

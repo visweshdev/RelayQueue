@@ -46,7 +46,7 @@ def main():
         lines.extend(textwrap.wrap(f"[{event['seconds']:6.2f}s] {event['text']}", width=100))
         frame = Image.new("RGB", (1240, 600), "#0b1220")
         draw = ImageDraw.Draw(frame)
-        draw.text((28, 20), "FORGE QUEUE | actual local execution", font=font, fill="#67e8c4")
+        draw.text((28, 20), "RelayQueue | actual local execution", font=font, fill="#67e8c4")
         draw.text(
             (28, 52),
             f"{elapsed:.1f}s recording compressed to 20s | timestamps show real elapsed time",

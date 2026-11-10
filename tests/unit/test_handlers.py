@@ -5,10 +5,10 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
 
-from forgequeue.config import Settings
-from forgequeue.worker.handlers import NoopInput, allowed_origin, noop
-from forgequeue.worker.registry import Registry
-from forgequeue.worker.runner import run_handler
+from relayqueue.config import Settings
+from relayqueue.worker.handlers import NoopInput, allowed_origin, noop
+from relayqueue.worker.registry import Registry
+from relayqueue.worker.runner import run_handler
 
 
 def test_registry_rejects_duplicates_and_unknowns():

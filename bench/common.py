@@ -45,7 +45,7 @@ def machine():
             cpus, memory = resources.stdout.split()
             allocation = {"logical_cpus": int(cpus), "ram_bytes": int(memory)}
         image_id = subprocess.run(
-            ["docker", "image", "inspect", "forgequeue:local", "--format", "{{.Id}}"],
+            ["docker", "image", "inspect", "relayqueue:local", "--format", "{{.Id}}"],
             capture_output=True,
             text=True,
             timeout=10,
@@ -96,7 +96,7 @@ def run_in_container(module, arguments):
             "run",
             "--rm",
             "--network",
-            os.getenv("BENCH_DOCKER_NETWORK", "forgequeue_default"),
+            os.getenv("BENCH_DOCKER_NETWORK", "relayqueue_default"),
             "--mount",
             f"type=bind,source={results},target=/app/bench/results",
             "--env",
@@ -105,7 +105,7 @@ def run_in_container(module, arguments):
             f"API_KEY={os.getenv('API_KEY', 'dev-key-1')}",
             "--env",
             f"BENCH_HOST_METADATA={json.dumps(machine())}",
-            "forgequeue-bench:local",
+            "relayqueue-bench:local",
             "python",
             "-u",
             "-m",

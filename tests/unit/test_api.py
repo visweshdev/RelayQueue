@@ -6,9 +6,9 @@ import sys
 import httpx
 import pytest
 
-from forgequeue.api.main import create_app
-from forgequeue.config import Settings
-from forgequeue.runtime import Runtime
+from relayqueue.api.main import create_app
+from relayqueue.config import Settings
+from relayqueue.runtime import Runtime
 
 
 @pytest.fixture
@@ -51,7 +51,7 @@ async def test_metrics_aggregate_independent_api_processes(client, tmp_path, mon
     os.mkdir(directory)
     environment = {**os.environ, "PROMETHEUS_MULTIPROC_DIR": directory}
     command = (
-        "from forgequeue.obs.metrics import SUBMITTED; "
+        "from relayqueue.obs.metrics import SUBMITTED; "
         "SUBMITTED.labels('multiproc-test', 'noop', '1').inc()"
     )
     for _ in range(2):

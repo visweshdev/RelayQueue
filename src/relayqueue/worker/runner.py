@@ -3,9 +3,9 @@ import json
 from dataclasses import dataclass
 from typing import Any
 
-from forgequeue.config import Settings
-from forgequeue.worker import handlers  # noqa: F401 - registers built-ins
-from forgequeue.worker.registry import Context, registry
+from relayqueue.config import Settings
+from relayqueue.worker import handlers  # noqa: F401 - registers built-ins
+from relayqueue.worker.registry import Context, registry
 
 
 @dataclass(frozen=True)

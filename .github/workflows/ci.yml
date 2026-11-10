@@ -18,9 +18,9 @@ jobs:
       - run: pip install -r requirements-dev.txt && pip install --no-deps -e .
       - run: ruff check src tests bench migrations && ruff format --check src tests bench migrations
       - run: mypy --strict src
-      - run: pytest tests/unit tests/integration --cov=forgequeue --cov-report=term-missing --cov-report=xml --cov-fail-under=85
+      - run: pytest tests/unit tests/integration --cov=relayqueue --cov-report=term-missing --cov-report=xml --cov-fail-under=85
       - run: docker compose config --quiet
-      - run: docker build -f deploy/Dockerfile -t forgequeue:ci .
+      - run: docker build -f deploy/Dockerfile -t relayqueue:ci .
       - uses: actions/upload-artifact@v4
         if: always()
         with:

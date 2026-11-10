@@ -6,9 +6,9 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from forgequeue.config import Settings
-from forgequeue.core.effects import apply_once
-from forgequeue.runtime import Runtime
+from relayqueue.config import Settings
+from relayqueue.core.effects import apply_once
+from relayqueue.runtime import Runtime
 
 
 async def receipt(session: AsyncSession) -> dict[str, Any]:
