@@ -33,6 +33,21 @@ x-app: &app
       condition: service_completed_successfully
 
 services:
+  demo:
+    profiles: [demo]
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    image: relayqueue:local
+    restart: "no"
+    entrypoint: [python, -m, relayqueue.examples.sales_report]
+    command: [/app/examples/sales.csv, --verify-demo]
+    environment:
+      RELAYQUEUE_URL: http://api:8000
+      API_KEY: ${API_KEY:-dev-key-1}
+    depends_on:
+      api:
+        condition: service_healthy
   postgres:
     image: postgres:16-alpine
     environment:
@@ -102,7 +117,7 @@ services:
     image: grafana/grafana:11.4.0
     environment:
       GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-forgequeue-local}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-relayqueue-local}
       GF_USERS_ALLOW_SIGN_UP: "false"
     volumes:
       - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
@@ -114,8 +129,8 @@ services:
 
 volumes:
   postgres-data:
-    name: forgequeue_postgres-data
+    name: relayqueue_postgres-data
   redis-data:
-    name: forgequeue_redis-data
+    name: relayqueue_redis-data
   grafana-data:
-    name: forgequeue_grafana-data
+    name: relayqueue_grafana-data

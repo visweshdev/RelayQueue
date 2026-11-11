@@ -151,7 +151,7 @@ Image: `sha256:802e9d4ccbf6de78d5ea6538e7351e9f54d91d63679a62b82057db9a641b80b7`
 
 The package, imports, entry points, API title and dashboard title now use RelayQueue/`relayqueue`.
 Docker project/image/network identifiers and dashboard UID use `relayqueue`.
-The renamed Compose project reuses existing named volumes to preserve stored data. Database tables and migration IDs are unchanged. Historical
+The renamed Compose project uses RelayQueue-named volumes. Existing deployment volumes remain intact but must be migrated before starting with existing data. Database tables and migration IDs are unchanged. Historical
 charts and demo recordings are rendered from the original data with RelayQueue branding. The historical dashboard image was AI-edited for RelayQueue branding and is illustrative; use the raw benchmark results for exact measurements and source fingerprints.
 
 The final 300-second corrected P3 run achieved 100.000 RPS, p95 35 ms, p99 50 ms, zero failures.

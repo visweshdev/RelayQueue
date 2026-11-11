@@ -1,6 +1,7 @@
 {
   "healthy_targets": 6,
   "worker_targets": 4,
-  "dashboard_uid": "forgequeue",
-  "verified": true
+  "dashboard_uid": "relayqueue",
+  "verified": false,
+  "note": "Dashboard renamed; rerun python -m bench.monitoring after starting the renamed deployment."
 }

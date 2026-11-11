@@ -9,6 +9,7 @@ from urllib.parse import urlsplit
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl
 
+from relayqueue.worker.handlers.sales_report import SalesInput, sales_report
 from relayqueue.worker.registry import Context, registry
 
 
@@ -126,3 +127,4 @@ registry.register("sleep", SleepInput, sleep)
 registry.register("flaky", FlakyInput, flaky)
 registry.register("cpu_hash", HashInput, cpu_hash)
 registry.register("http_call", HttpInput, http_call)
+registry.register("sales_report", SalesInput, sales_report)

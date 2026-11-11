@@ -20,6 +20,7 @@ jobs:
       - run: pip install -r requirements-dev.txt && pip install --no-deps -e .
       - run: pytest tests/chaos -v
       - run: docker compose up -d --build --wait --wait-timeout 180
+      - run: docker compose --profile demo run --rm demo
       - run: python -m bench.throughput --jobs 1000 --workers 4 --output nightly-throughput.json
       - run: python -m bench.monitoring
       - run: docker compose down --volumes

@@ -21,7 +21,7 @@ async def main():
                 await asyncio.sleep(2)
         dashboard = await client.get(
             "http://localhost:3000/api/dashboards/uid/relayqueue",
-            auth=("admin", os.getenv("GRAFANA_PASSWORD", "forgequeue-local")),
+            auth=("admin", os.getenv("GRAFANA_PASSWORD", "relayqueue-local")),
         )
         dashboard.raise_for_status()
         assert len(dashboard.json()["dashboard"]["panels"]) >= 8
