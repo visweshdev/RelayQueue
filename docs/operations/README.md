@@ -20,7 +20,29 @@ Copy `.env.example` to `.env` for overrides. `docker compose down` keeps persist
 
 ## Compose volume migration
 
-The renamed Compose project uses RelayQueue-named volumes. Existing deployment volumes remain intact and must be migrated before starting with existing data. Database tables and migration IDs are unchanged.
+The local deployment was migrated on November 11, 2026, with all 372,073 pre-existing jobs
+preserved. PostgreSQL, Redis and Grafana now mount `relayqueue_*` volumes. Original volumes
+remain offline rollback copies; they consume disk and are not kept synchronized with new writes.
+Database tables and migration IDs are unchanged.
+
+For another existing installation, first record its actual mounts with `docker inspect`, stop
+producers and the Compose stack, and back up its volumes. Copy data only while the stores are
+stopped, preserving file ownership, into empty destination volumes. Never overwrite a populated
+destination. Start the renamed stack, compare job counts and attempt history, then verify
+readiness and `python -m bench.monitoring` before accepting traffic. Fresh clones need no migration.
+
+Grafana's initial password environment variable does not reset a password stored in an existing
+database. To align this local demo's password explicitly:
+
+```sh
+docker compose exec grafana grafana cli --homepath /usr/share/grafana admin reset-admin-password relayqueue-local
+```
+
+For a persisted dashboard UID change, back up the stopped Grafana database and migrate the
+existing dashboard record before reprovisioning. The local migration retained a SQLite backup
+inside its Grafana volume. Do not delete the original storage until your backup and restore
+procedure has been validated. For rollback after new jobs are accepted, reconcile those new
+writes first; simply pointing at an old volume would hide them.
 
 ## Technology stack
 
@@ -66,6 +88,8 @@ Chaos tests use real Docker processes. CI runs lint/types/unit/integration/cover
 nightly runs chaos, a short benchmark and monitoring checks. CI and Nightly reliability passed on commit `c0efe99` on November 11, 2026.
 See [workflow runs](https://github.com/visweshdev/RelayQueue/actions).
 Use [testing instructions](../testing.md) for exact commands and fixture safety.
+See [current delivery verification](../release-verification.md) and
+[production boundaries and operating costs](../production-readiness.md).
 
 ## Repository and engineering trade-offs
 

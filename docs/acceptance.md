@@ -1,7 +1,7 @@
 # Acceptance gates
 
-Updated 2026-11-10. PASS means executed, NOT RUN means unexecuted, FAIL means an observed
-failure, INCOMPLETE means a missing deliverable. The project is not acceptance-complete.
+Updated 2026-11-11. PASS means executed, NOT RUN means unexecuted, FAIL means an observed
+failure, INCOMPLETE means a missing deliverable. See the dated verification update below.
 
 | Gate | Result | Evidence |
 |---|---|---|
@@ -9,8 +9,8 @@ failure, INCOMPLETE means a missing deliverable. The project is not acceptance-c
 | Python 3.12 package builds | PASS | Local 3.12.14; wheel includes six Lua scripts |
 | No prohibited queue framework | PASS | Source/dependencies inspected |
 | Ruff lint and formatting | PASS | Source, tests, benchmarks and migrations |
-| Strict mypy | PASS | 36 source files |
-| Unit tests | PASS | 123 cases |
+| Strict mypy | PASS | 38 source files |
+| Unit tests | PASS | 144 cases; 178 including integration |
 | Central state machine | PASS | Exhaustive state pairs and manual gate |
 | Typed handlers, bounded HTTP, async/CPU timeout | PASS | Actual child process and local HTTP server tests |
 | Offline Alembic SQL | PASS | upgrade head --sql |
@@ -25,8 +25,8 @@ failure, INCOMPLETE means a missing deliverable. The project is not acceptance-c
 | Heartbeat/recovery/fencing | PASS | Expiry, stale completion and clock-drift tests |
 | Redis restart / index reconstruction | PASS | Real restart and index-loss tests |
 | SIGKILL/SIGTERM/PostgreSQL outage | PASS | Six chaos tests, 210.73 seconds; recovery build |
-| Coverage >=85% | PASS | 89.93% Windows; Linux 90.28% |
-| CI actually green | NOT RUN | Configured; no remote run |
+| Coverage >=85% | PASS | Current Windows suite: 88.78%; historical Linux suite: 90.28% |
+| CI actually green | PASS | CI passed on `918a5b4`; [runs](https://github.com/visweshdev/RelayQueue/actions) |
 | Live Prometheus and Grafana | PASS | Six healthy scrape targets including four workers |
 | Benchmark CLIs/package | PASS | Help commands loaded |
 | P1-P5 / R1-R6 experiments | PASS | P3 rerun November 10 passes; other evidence is historical and identified below |
@@ -61,15 +61,14 @@ Linux Python 3.12.16: 157 passed, 0 skipped, 108.84 s; combined coverage 90.28%.
 
 ## Remaining acceptance work
 
-P3 now passes the corrected sustained-rate test. Remote CI requires an actual
-GitHub repository. See [final report](final-report.md) for evidence and limitations.
+P3 passes the corrected sustained-rate test, and remote CI is green. See [final report](final-report.md) for evidence and limitations.
 
 
-## RelayQueue update — November 10
+## RelayQueue update â€” November 10
 
 The package, imports, entry points, API title and dashboard title now use RelayQueue/`relayqueue`.
 Docker project/image/network identifiers and dashboard UID use `relayqueue`.
-The renamed Compose project uses RelayQueue-named volumes. Existing deployment volumes remain intact but must be migrated before starting with existing data. Database tables and migration IDs are unchanged. Historical
+The renamed Compose project uses RelayQueue-named volumes. The local deployment was migrated on November 11; original volumes were retained for rollback. Database tables and migration IDs are unchanged. Historical
 charts and demo recordings are rendered from the original data with RelayQueue branding. The historical dashboard image was AI-edited for RelayQueue branding and is illustrative; use the raw benchmark results for exact measurements and source fingerprints.
 
 The final 300-second corrected P3 run achieved 100.000 RPS, p95 35 ms, p99 50 ms, zero failures.
@@ -83,4 +82,4 @@ No synchronous-commit, fsync, ownership or durability guarantees were weakened. 
 process count remains two. The benchmark correction is the main observed improvement; the
 35 ms result must not be represented as a 630-to-35 ms server-only optimization.
 
-Remaining external gate: execute the configured workflow in a real GitHub repository.
+Remote CI passed on `918a5b4`. See [current verification](release-verification.md) for the demo, deployment and workflow evidence.

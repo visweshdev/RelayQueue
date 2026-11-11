@@ -32,6 +32,7 @@ bench/results/baseline-single-api/scaling.png
 bench/results/baseline-single-api/throughput.json
 bench/results/campaign.json
 bench/results/chaos.json
+bench/results/ci-smoke-throughput.json
 bench/results/demo-recording.json
 bench/results/demo.gif
 bench/results/latency-api4-diagnostic.json
@@ -86,14 +87,23 @@ deploy/grafana/provisioning/dashboards/default.yml
 deploy/grafana/provisioning/datasources/prometheus.yml
 deploy/prometheus.yml
 docs/acceptance.md
+docs/api/README.md
 docs/architecture.md
+docs/architecture/README.md
+docs/assets/relayqueue-banner.png
+docs/benchmarks/README.md
 docs/design-decisions.md
 docs/file-inventory.txt
 docs/final-report.md
 docs/implementation-progress.md
+docs/operations/README.md
 docs/prd-implementation-matrix.md
+docs/production-readiness.md
+docs/release-verification.md
+docs/sales-report.md
 docs/testing.md
 docs/validation-report.json
+examples/sales.csv
 migrations/env.py
 migrations/script.py.mako
 migrations/versions/0001_initial.py
@@ -128,6 +138,7 @@ src/relayqueue/core/repo.py
 src/relayqueue/core/states.py
 src/relayqueue/examples/__init__.py
 src/relayqueue/examples/effect_ledger.py
+src/relayqueue/examples/sales_report.py
 src/relayqueue/health.py
 src/relayqueue/obs/__init__.py
 src/relayqueue/obs/logging.py
@@ -139,6 +150,7 @@ src/relayqueue/reaper/scheduler.py
 src/relayqueue/runtime.py
 src/relayqueue/worker/__init__.py
 src/relayqueue/worker/handlers/__init__.py
+src/relayqueue/worker/handlers/sales_report.py
 src/relayqueue/worker/hash_process.py
 src/relayqueue/worker/registry.py
 src/relayqueue/worker/runner.py
@@ -154,5 +166,6 @@ tests/unit/test_bench.py
 tests/unit/test_core.py
 tests/unit/test_handlers.py
 tests/unit/test_reaper.py
+tests/unit/test_sales_report.py
 tests/unit/test_worker.py
 uv.lock

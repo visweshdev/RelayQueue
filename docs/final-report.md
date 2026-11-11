@@ -1,8 +1,6 @@
 # RelayQueue engineering report
 
-Updated 2026-11-10. Implementation and local validation are delivered. Full acceptance is
-**not fully achieved**: the corrected P3 test passes on November 10. Remote GitHub CI
-is NOT RUN because this workspace has no Git repository/remote. No production-readiness claim.
+Updated 2026-11-11. Implementation, local validation and remote CI are delivered. The sales-report use case is tested; see [current verification](release-verification.md). No production-readiness claim.
 
 ## Implementation and repository
 
@@ -138,20 +136,20 @@ Locust CSV and source/image fingerprints are included. The refreshed November 6 
 the scaling history and return to four workers. Failure-event panels have no samples during
 that successful-workload window.
 
-Remaining acceptance work: execute the configured CI in a real GitHub repository. No remote was invented or published. There is no job retention
+Remote CI is now verified. Remaining production limitations: there is no job retention
 policy, Redis clustering, multiregion operation or tenant isolation. External effects require
 downstream idempotency; operational metrics may lose unscraped events on crashes. PostgreSQL
 backup/restore operations and deployment-specific production security are outside this local build.
 
-Final runtime source SHA256: `4576bdd376a2bc9d9d9ba4ad0d075263ae5a146a0729c0e9cbbb049944d220cf`.
+Historical benchmark runtime source SHA256: `4576bdd376a2bc9d9d9ba4ad0d075263ae5a146a0729c0e9cbbb049944d220cf`.
 Image: `sha256:802e9d4ccbf6de78d5ea6538e7351e9f54d91d63679a62b82057db9a641b80b7`.
 
 
-## RelayQueue update — November 10
+## RelayQueue update â€” November 10
 
 The package, imports, entry points, API title and dashboard title now use RelayQueue/`relayqueue`.
 Docker project/image/network identifiers and dashboard UID use `relayqueue`.
-The renamed Compose project uses RelayQueue-named volumes. Existing deployment volumes remain intact but must be migrated before starting with existing data. Database tables and migration IDs are unchanged. Historical
+The renamed Compose project uses RelayQueue-named volumes. The local deployment was migrated on November 11; original volumes were retained for rollback. Database tables and migration IDs are unchanged. Historical
 charts and demo recordings are rendered from the original data with RelayQueue branding. The historical dashboard image was AI-edited for RelayQueue branding and is illustrative; use the raw benchmark results for exact measurements and source fingerprints.
 
 The final 300-second corrected P3 run achieved 100.000 RPS, p95 35 ms, p99 50 ms, zero failures.
@@ -165,4 +163,4 @@ No synchronous-commit, fsync, ownership or durability guarantees were weakened. 
 process count remains two. The benchmark correction is the main observed improvement; the
 35 ms result must not be represented as a 630-to-35 ms server-only optimization.
 
-Remaining external gate: execute the configured workflow in a real GitHub repository.
+Remote CI passed on `918a5b4`. See [current verification](release-verification.md) for the demo, deployment and workflow evidence.
