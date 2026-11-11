@@ -11,4 +11,4 @@ def get_runtime(request: Request) -> Runtime:
 
 
 async def get_repo(request: Request) -> Repository:
-    return Repository(get_runtime(request))
+    return Repository(get_runtime(request), getattr(request.state, "allowed_queue", None))

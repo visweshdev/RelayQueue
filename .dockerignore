@@ -5,6 +5,8 @@
 tmp
 __pycache__
 .env
+.secrets
+backups
 .coverage*
 .mypy_cache
 .pytest_cache

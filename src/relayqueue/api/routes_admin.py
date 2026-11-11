@@ -50,4 +50,11 @@ async def queue_stats(repo: Repo) -> list[QueueStat]:
     "/v1/workers", response_model=list[WorkerResponse], dependencies=[Depends(authenticate)]
 )
 async def workers(repo: Repo) -> list[WorkerResponse]:
+    if repo.allowed_queue is not None:
+        raise HTTPException(403, "Worker diagnostics require operator access")
     return [WorkerResponse.model_validate(row) for row in await repo.worker_stats()]
+
+
+@router.get("/v1/session", dependencies=[Depends(authenticate)])
+async def session(request: Request) -> dict[str, str | None]:
+    return {"queue": getattr(request.state, "allowed_queue", None)}

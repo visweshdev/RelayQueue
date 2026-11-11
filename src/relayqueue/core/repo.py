@@ -40,18 +40,21 @@ def move(job: Job, target: Status, now: datetime, *, manual: bool = False) -> No
 
 
 class Repository:
-    def __init__(self, runtime: Runtime) -> None:
+    def __init__(self, runtime: Runtime, allowed_queue: str | None = None) -> None:
         self.runtime = runtime
+        self.allowed_queue = allowed_queue
         self.broker = runtime.broker
         self.settings = runtime.settings
 
     async def locked(self, session: AsyncSession, job_id: UUID) -> Job:
         job = await session.scalar(select(Job).where(Job.id == job_id).with_for_update())
-        if job is None:
+        if job is None or (self.allowed_queue is not None and job.queue != self.allowed_queue):
             raise NotFound("Job not found")
         return job
 
     async def submit(self, spec: JobCreate) -> tuple[Job, bool]:
+        if self.allowed_queue is not None and spec.queue != self.allowed_queue:
+            raise NotFound("Queue not found")
         async with self.runtime.sessions.begin() as session:
             now = await db_now(session)
             run_at = spec.run_at or now
@@ -126,7 +129,7 @@ class Repository:
     async def get(self, job_id: UUID) -> tuple[Job, list[Attempt]]:
         async with self.runtime.sessions() as session:
             job = await session.get(Job, job_id)
-            if job is None:
+            if job is None or (self.allowed_queue is not None and job.queue != self.allowed_queue):
                 raise NotFound("Job not found")
             history = list(
                 (
@@ -147,6 +150,8 @@ class Repository:
         task: str | None = None,
     ) -> tuple[list[Job], str | None]:
         statement = select(Job).order_by(Job.created_at.desc(), Job.id.desc()).limit(limit + 1)
+        if self.allowed_queue is not None:
+            statement = statement.where(Job.queue == self.allowed_queue)
         if cursor:
             timestamp, identifier = decode_cursor(cursor)
             statement = statement.where(
@@ -398,7 +403,11 @@ class Repository:
                 await session.execute(
                     select(
                         Job.queue, Job.status, Job.priority, func.count(), func.min(Job.updated_at)
-                    ).group_by(Job.queue, Job.status, Job.priority)
+                    )
+                    .where(
+                        Job.queue == self.allowed_queue if self.allowed_queue is not None else True
+                    )
+                    .group_by(Job.queue, Job.status, Job.priority)
                 )
             ).all()
         return [

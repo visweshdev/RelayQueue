@@ -1,0 +1,18 @@
+groups:
+  - name: relayqueue
+    rules:
+      - alert: RelayQueueTargetDown
+        expr: up == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations: {summary: "A RelayQueue scrape target is unavailable"}
+      - alert: RelayQueueDeadJobs
+        expr: sum(fq_dead_jobs) > 0
+        for: 5m
+        labels: {severity: warning}
+        annotations: {summary: "Dead-letter jobs need operator review"}
+      - alert: RelayQueueQueueBacklog
+        expr: sum(fq_queue_depth{status="queued"}) > 1000
+        for: 5m
+        labels: {severity: warning}
+        annotations: {summary: "Queue backlog remains above 1000 jobs"}

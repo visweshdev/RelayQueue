@@ -1,0 +1,7 @@
+https://localhost {
+    tls internal
+    @private path /metrics /ready /health /docs* /openapi.json /redoc*
+    respond @private 404
+    header Strict-Transport-Security "max-age=31536000"
+    reverse_proxy api:8000
+}

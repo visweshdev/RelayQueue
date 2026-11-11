@@ -1,11 +1,13 @@
 import time
 from collections.abc import AsyncIterator, Awaitable, Callable, Mapping
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import structlog
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.staticfiles import StaticFiles
 from redis.exceptions import RedisError
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.exceptions import HTTPException
@@ -81,6 +83,12 @@ def create_app(runtime: Runtime | None = None) -> FastAPI:
     app.add_middleware(BodyLimit)
     app.include_router(routes_jobs.router)
     app.include_router(routes_admin.router)
+    ui = Path(__file__).resolve().parents[1] / "ui"
+    app.mount("/ui", StaticFiles(directory=ui), name="ui")
+
+    @app.get("/", include_in_schema=False)
+    async def dashboard() -> FileResponse:
+        return FileResponse(ui / "index.html")
 
     @app.exception_handler(HTTPException)
     async def http_error(request: Request, exc: HTTPException) -> JSONResponse:
@@ -118,6 +126,14 @@ def create_app(runtime: Runtime | None = None) -> FastAPI:
     ) -> Response:
         started = time.monotonic()
         response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; script-src 'self'; style-src 'self'; "
+            "img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'"
+        )
+        if request.url.path.startswith("/v1/"):
+            response.headers["Cache-Control"] = "no-store"
         route = getattr(request.scope.get("route"), "path", "unmatched")
         HTTP.labels(route, request.method, response.status_code).observe(time.monotonic() - started)
         return response
