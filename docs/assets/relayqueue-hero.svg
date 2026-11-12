@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="370" viewBox="0 0 1200 370" role="img" aria-labelledby="title desc">
+<title id="title">RelayQueue — Persistent jobs. Visible progress.</title>
+<desc id="desc">A distributed Python job queue. A schematic shows accepted jobs moving through workers to completed results.</desc>
+<defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#11243f"/><stop offset="1" stop-color="#1d365a"/></linearGradient><pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#56749b" opacity=".26"/></pattern><marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 8 4 0 8" fill="none" stroke="#809cc6" stroke-width="1.5"/></marker></defs>
+<rect width="1200" height="370" rx="18" fill="url(#bg)"/><rect width="1200" height="370" rx="18" fill="url(#grid)"/>
+<g font-family="Segoe UI,Arial,sans-serif">
+<rect x="52" y="52" width="42" height="42" rx="11" fill="#557eff"/><g stroke="#fff" stroke-width="3" fill="none"><path d="M62 66q5-5 11 0t11 0M62 74q5-5 11 0t11 0M62 82q5-5 11 0t11 0"/></g>
+<text x="110" y="81" fill="#bfd1ed" font-size="17">Work that keeps moving.</text>
+<text x="50" y="167" fill="#fff" font-size="62" font-weight="700" letter-spacing="-2">RelayQueue</text>
+<text x="53" y="212" fill="#d7e3f6" font-size="24">Persistent jobs. Visible progress.</text>
+<text x="53" y="251" fill="#a6bbd9" font-size="16">A distributed Python queue built for retries and recovery.</text>
+<g fill="#d7e3f6" font-size="13"><rect x="53" y="286" width="77" height="29" rx="5" fill="#294365"/><text x="69" y="306">Python</text><rect x="139" y="286" width="84" height="29" rx="5" fill="#294365"/><text x="154" y="306">FastAPI</text><rect x="232" y="286" width="111" height="29" rx="5" fill="#294365"/><text x="246" y="306">PostgreSQL</text><rect x="352" y="286" width="66" height="29" rx="5" fill="#294365"/><text x="368" y="306">Redis</text></g>
+<g transform="translate(680 80)"><rect width="466" height="225" rx="12" fill="#132843" stroke="#395577"/>
+<text x="24" y="35" fill="#e4edfb" font-size="14" font-weight="600">From accepted to completed</text><circle cx="430" cy="30" r="4" fill="#77d3ac"/>
+<path d="M107 113h47m116 0h41" fill="none" stroke="#809cc6" stroke-width="2" marker-end="url(#arrow)"/>
+<g fill="#253f62" stroke="#53739e"><rect x="24" y="87" width="83" height="51" rx="6"/><rect x="160" y="72" width="110" height="24" rx="5"/><rect x="160" y="103" width="110" height="24" rx="5"/><rect x="160" y="134" width="110" height="24" rx="5"/></g>
+<g fill="#bcd0ef" font-size="12" text-anchor="middle"><text x="65" y="117">Job queue</text><text x="215" y="89">Worker</text><text x="215" y="120">Worker</text><text x="215" y="151">Worker</text></g>
+<rect x="319" y="87" width="122" height="51" rx="6" fill="#204d4a" stroke="#458b76"/><text x="380" y="117" text-anchor="middle" fill="#a8ecd0" font-size="12">Completed ✓</text>
+<path d="M215 167v20H65v-39" fill="none" stroke="#809cc6" stroke-dasharray="4 4" marker-end="url(#arrow)"/><text x="250" y="192" fill="#97afcf" font-size="11">Retry when needed</text>
+</g></g></svg>
