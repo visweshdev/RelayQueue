@@ -58,6 +58,9 @@ Invoke-RestMethod "http://localhost:8000/v1/jobs/$($job.id)" -Headers $headers
 
 ## Try a real file-processing workflow
 
+Open the [local dashboard](http://localhost:8000/) and connect with `dev-key-1`.
+[Dashboard demo, local HTTPS setup and CSV benchmarks](docs/local-rehearsal.md).
+
 After starting the stack, run:
 
 ```sh

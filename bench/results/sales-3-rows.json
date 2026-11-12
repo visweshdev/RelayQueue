@@ -1,0 +1,34 @@
+{
+  "task": "sales_report",
+  "machine": {
+    "cpu": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+    "logical_cpus": 18,
+    "ram_bytes": 16641941504,
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.14",
+    "docker_server": "29.9.2",
+    "docker_allocation": {
+      "logical_cpus": 18,
+      "ram_bytes": 8058466304
+    },
+    "runtime_image_id": "sha256:f75cce44dcc62e2d21a2dd8b7d58140fd403a7d387039fb19d7d13ad7f40e8e4",
+    "source_sha256": "077a490807ad9dc766a2449e7df4c9fc20f19858a715f6504eca5f172f38f9ba",
+    "timestamp": "2026-11-12T05:53:21.606901+00:00"
+  },
+  "jobs": 1000,
+  "rows_per_file": 3,
+  "csv_bytes": 72,
+  "workers_observed": 4,
+  "concurrency": 16,
+  "submission_seconds": 25.57275369996205,
+  "elapsed_seconds": 26.68075569998473,
+  "jobs_per_minute": 2248.811865551257,
+  "submit_p95_ms": 936.4975999924354,
+  "submit_p99_ms": 1297.419100010302,
+  "submission_retries": 0,
+  "outcomes": {
+    "succeeded": 1000
+  },
+  "all_results_valid": true,
+  "note": "Includes HTTP submission and polling; single local run, not a sustained-rate latency test."
+}

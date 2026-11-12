@@ -405,7 +405,9 @@ class Repository:
                         Job.queue, Job.status, Job.priority, func.count(), func.min(Job.updated_at)
                     )
                     .where(
-                        Job.queue == self.allowed_queue if self.allowed_queue is not None else True
+                        Job.queue == self.allowed_queue
+                        if self.allowed_queue is not None
+                        else literal(True)
                     )
                     .group_by(Job.queue, Job.status, Job.priority)
                 )

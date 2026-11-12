@@ -1,0 +1,18 @@
+{
+  "verified_at": "20261112T055426Z",
+  "backup_file": "relayqueue-20261112T055426Z.dump",
+  "sha256": "57d1c7dff22ce6b03b5d0d28a30b14934ee3ff2eaadb2f551acf91006514b66e",
+  "bytes": 38286085,
+  "source_counts": {
+    "jobs": 374075,
+    "attempts": 374213,
+    "effects": 0
+  },
+  "restored_counts": {
+    "jobs": 374075,
+    "attempts": 374213,
+    "effects": 0
+  },
+  "restore_seconds": 10.3,
+  "verified": true
+}

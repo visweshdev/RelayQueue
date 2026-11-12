@@ -8,7 +8,7 @@ under the tested failures, not a production SLA or real-user adoption.
 | PostgreSQL owns lifecycle and results | Recovery can reconstruct Redis indexes | Durable writes, row locks and connection pools limit throughput |
 | Redis leases plus fencing at completion | Stale workers cannot commit a newer owner's result | An external side effect can still happen twice before completion is recorded |
 | At-least-once execution | Work can recover after worker loss | Handlers must tolerate replay; submission deduplication is not effect deduplication |
-| Full payloads/results in PostgreSQL | Simple durable small-file demo | Storage/WAL/backups grow with jobs; there is no automatic retention |
+| Full payloads/results in PostgreSQL | Simple durable small-file demo | Storage/WAL/backups grow with jobs; bounded retention is enabled in the isolated rehearsal |
 | Periodic reconciliation | Repairs cross-store publication gaps | Database scans and per-job checks increase cost with backlog/history |
 | Separate workers and monitoring | Failure isolation and observable ownership | More containers, memory, network connections and operational work than an in-process queue |
 
@@ -34,13 +34,15 @@ No cloud bill estimate is claimed without a provider, workload and retention pol
 Measure accepted/drained throughput, queue age, database pool pressure, CPU/RAM and storage growth
 under your actual handlers. Published noop throughput includes load-client overhead and is not a
 capacity promise for file parsing or external APIs. Existing benchmark data remains tied to its
-recorded source and machine; new application features have not been re-benchmarked at full scale.
+recorded source and machine. [CSV measurements](local-rehearsal.md#measured-csv-workload)
+now cover 1,000 jobs per run; the 20,000-job campaign remains a noop workload.
 
 ## Before exposing it publicly
 
-Add TLS and managed secrets, tenant-aware authorization, upload/storage retention controls,
-database backups with tested restores, resource limits, alert routing and a deployment rollback
-procedure. Protect diagnostics and monitoring endpoints. The included shared API keys and local
+The [isolated local rehearsal](local-rehearsal.md) implements TLS, file-mounted secrets,
+queue-scoped tenant authorization, retention, backup/restore verification and local alerts.
+Before public use, configure managed secrets, off-host backup scheduling, resource limits,
+external alert routing and a deployment rollback procedure. The included shared API keys and local
 passwords are development defaults. PostgreSQL/Redis are single-node in Compose; a host or disk
 failure requires backups, not just queue retries. Cancellation cannot undo completed side effects.
 

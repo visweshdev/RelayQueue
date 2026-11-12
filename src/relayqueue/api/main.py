@@ -6,7 +6,7 @@ from pathlib import Path
 import structlog
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from redis.exceptions import RedisError
 from sqlalchemy.exc import SQLAlchemyError
@@ -87,8 +87,8 @@ def create_app(runtime: Runtime | None = None) -> FastAPI:
     app.mount("/ui", StaticFiles(directory=ui), name="ui")
 
     @app.get("/", include_in_schema=False)
-    async def dashboard() -> FileResponse:
-        return FileResponse(ui / "index.html")
+    async def dashboard() -> RedirectResponse:
+        return RedirectResponse("/ui/index.html")
 
     @app.exception_handler(HTTPException)
     async def http_error(request: Request, exc: HTTPException) -> JSONResponse:
@@ -128,10 +128,11 @@ def create_app(runtime: Runtime | None = None) -> FastAPI:
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "no-referrer"
-        response.headers["Content-Security-Policy"] = (
-            "default-src 'self'; script-src 'self'; style-src 'self'; "
-            "img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'"
-        )
+        if request.url.path == "/" or request.url.path.startswith("/ui/"):
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'self'; script-src 'self'; style-src 'self'; "
+                "img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'"
+            )
         if request.url.path.startswith("/v1/"):
             response.headers["Cache-Control"] = "no-store"
         route = getattr(request.scope.get("route"), "path", "unmatched")

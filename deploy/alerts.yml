@@ -7,12 +7,12 @@ groups:
         labels: {severity: critical}
         annotations: {summary: "A RelayQueue scrape target is unavailable"}
       - alert: RelayQueueDeadJobs
-        expr: sum(fq_dead_jobs) > 0
+        expr: sum(fq_queue_depth{state="dead"}) > 0
         for: 5m
         labels: {severity: warning}
         annotations: {summary: "Dead-letter jobs need operator review"}
       - alert: RelayQueueQueueBacklog
-        expr: sum(fq_queue_depth{status="queued"}) > 1000
+        expr: sum(fq_queue_depth{state="queued"}) > 1000
         for: 5m
         labels: {severity: warning}
         annotations: {summary: "Queue backlog remains above 1000 jobs"}
