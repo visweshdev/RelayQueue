@@ -1,0 +1,38 @@
+async page => {
+ await page.goto('http://localhost:8000/');
+ await page.setViewportSize({width:1440,height:1000});
+ await page.getByRole('button',{name:'Try local demo',exact:true}).click();
+ await page.getByText('Workspace connected',{exact:true}).waitFor();
+ const headers={'X-API-Key':'dev-key-1'};
+ const response=await page.request.post('http://localhost:8000/v1/jobs',{headers,data:{task:'noop',run_at:new Date(Date.now()+3600000).toISOString()}});
+ if(response.status()!==201)throw Error('Setup job failed');
+ const pending=await response.json();
+ await page.getByRole('button',{name:'Refresh',exact:true}).click();
+ await page.getByRole('button',{name:`Open job ${pending.id.slice(0,8)}`,exact:true}).click();
+ await page.getByRole('button',{name:'Cancel job',exact:true}).click();
+ await page.locator('#job-summary').filter({hasText:'Cancelled'}).waitFor();
+ await page.getByRole('button',{name:'Done',exact:true}).click();
+ const bad=await page.request.post('http://localhost:8000/v1/jobs',{headers,data:{task:'sales_report',payload:{content:'bad,header\nx,y'},max_attempts:1}});
+ if(bad.status()!==201)throw Error('Failed job setup failed');
+ const failed=await bad.json();
+ await page.getByRole('button',{name:'Refresh',exact:true}).click();
+ await page.getByRole('button',{name:`Open job ${failed.id.slice(0,8)}`,exact:true}).click();
+ await page.getByRole('button',{name:'Retry job',exact:true}).waitFor();
+ await page.getByRole('button',{name:'Retry job',exact:true}).click();
+ await page.locator('#detail-message').filter({hasText:'Retry requested'}).waitFor();
+ await page.getByRole('button',{name:'Done',exact:true}).click();
+ await page.route('**/v1/jobs?*',route=>route.abort());
+ await page.getByRole('button',{name:'Refresh',exact:true}).click();
+ await page.locator('#message').filter({hasText:'Cannot reach RelayQueue'}).waitFor();
+ if(!await page.getByRole('button',{name:'Refresh',exact:true}).isEnabled())throw Error('Refresh remains disabled after failure');
+ await page.unroute('**/v1/jobs?*');
+ await page.getByRole('button',{name:'Refresh',exact:true}).click();
+ await page.locator('#message').filter({hasText:'Job list refreshed'}).waitFor();
+ await page.route('**/v1/jobs?*',async route=>{await new Promise(resolve=>setTimeout(resolve,800));await route.continue().catch(()=>{});});
+ await page.getByRole('button',{name:'Refresh',exact:true}).click();
+ await page.getByRole('button',{name:'Disconnect',exact:true}).click();
+ await page.waitForTimeout(1200);
+ if(await page.locator('#rows tr').count()!==0)throw Error('Stale response restored private jobs');
+ await page.unroute('**/v1/jobs?*');
+ console.log('PASS: cancel, retry, network error recovery, and disconnect during a request.');
+}

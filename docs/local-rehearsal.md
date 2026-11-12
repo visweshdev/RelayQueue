@@ -14,7 +14,12 @@ RelayQueue volumes remain. This verification does not claim a new GitHub Actions
 ## Dashboard
 
 Run `docker compose up -d --build --wait`, open <http://localhost:8000/>, and connect
-with `dev-key-1`. Upload `examples/sales.csv`: the result is 6 units and 50.10 revenue.
+with `dev-key-1`, or select **Try local demo**. Open **Create report**, choose **Use
+sample data** or upload `examples/sales.csv`, then select **Create report**: the result
+is 6 units and 50.10 revenue. Job details open immediately in a dialog. Jobs, report
+creation, the API guide and interactive API documentation navigate in the same tab.
+Search and status filtering apply to loaded jobs. Loading older jobs pauses automatic
+list refresh so pagination stays intact; Refresh returns to the newest jobs.
 Open the URL rather than double-clicking `src/relayqueue/ui/index.html`; a file preview
 cannot call the API. The dashboard keeps the access key in memory and clears it on reload.
 
