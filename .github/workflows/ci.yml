@@ -26,3 +26,30 @@ jobs:
         with:
           name: coverage
           path: coverage.xml
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: docker compose up -d --build --wait --wait-timeout 180
+      - run: npm run test:browser
+      - name: Capture container logs
+        if: always()
+        run: |
+          mkdir -p output/browser-checks
+          docker compose logs --no-color > output/browser-checks/containers.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-checks
+          path: output/browser-checks/
+      - name: Stop isolated CI stack
+        if: always()
+        run: docker compose down --volumes

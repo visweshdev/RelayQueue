@@ -59,11 +59,65 @@ async function refreshRace() {
   assert.ok(await page.evaluate(() => window.listCalls >= 2));
   console.log('PASS: manual refresh waits for polling and sends its own request');
 }
+async function workflow() {
+  await open(); await connect();
+  const headers = { 'X-API-Key': 'dev-key-1' };
+  for (let i = 0; i < 13; i++) {
+    const response = await context.request.post(`${base}/v1/jobs`, { headers, data: { task: 'noop' } });
+    assert.equal(response.status(), 201);
+  }
+  await page.getByRole('button', { name: 'Refresh', exact: true }).click();
+  await page.locator('#message').filter({ hasText: 'Job list refreshed.' }).waitFor();
+  await page.getByRole('button', { name: 'Load older jobs', exact: true }).click();
+  await page.waitForFunction(() => document.querySelectorAll('#rows tr').length > 12);
+  const count = await page.locator('#rows tr').count();
+  await page.waitForTimeout(5500);
+  assert.equal(await page.locator('#rows tr').count(), count);
+  await page.getByLabel('Search loaded jobs').fill('nonexistent-job-identifier');
+  await page.getByText('No matching jobs', { exact: true }).waitFor();
+  await page.getByLabel('Search loaded jobs').fill('');
+  const tabs = context.pages().length;
+  await page.locator('nav a[href="#upload"]').click();
+  await page.getByRole('button', { name: 'Create report', exact: true }).click();
+  await page.locator('#message').filter({ hasText: 'Choose a CSV file' }).waitFor();
+  await page.getByRole('button', { name: 'Use sample data', exact: true }).click();
+  await page.getByText('Sample sales.csv selected', { exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Create report', exact: true }).click();
+  await page.locator('#result-summary').filter({ hasText: '50.10' }).waitFor({ timeout: 30000 });
+  await page.keyboard.press('Escape');
+  assert.equal(await page.getByRole('dialog').isVisible(), false);
+  await page.locator('nav a[href="#guide"]').click();
+  await page.getByText('Built to work with your code.', { exact: true }).waitFor();
+  assert.equal(context.pages().length, tabs);
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const view of ['upload', 'jobs']) {
+    await page.locator(`nav a[href="#${view}"]`).click();
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+  }
+  await page.screenshot({ path: 'output/browser-checks/mobile.png', fullPage: true });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.route('**/v1/jobs?*', route => route.abort());
+  await page.getByRole('button', { name: 'Refresh', exact: true }).click();
+  await page.locator('#message').filter({ hasText: 'Cannot reach RelayQueue' }).waitFor();
+  assert.equal(await page.getByRole('button', { name: 'Refresh', exact: true }).isEnabled(), true);
+  await page.unroute('**/v1/jobs?*');
+  await page.getByRole('button', { name: 'Refresh', exact: true }).click();
+  await page.locator('#message').filter({ hasText: 'Job list refreshed.' }).waitFor();
+  await page.getByRole('button', { name: 'Disconnect', exact: true }).click();
+  assert.equal(await page.locator('#rows tr').count(), 0);
+  await page.locator('nav a[href="#upload"]').click();
+  assert.equal(await page.getByRole('button', { name: 'Create report', exact: true }).isEnabled(), false);
+  console.log('PASS: upload, result, navigation, pagination, search, mobile, network recovery, disconnect');
+}
 try {
   await sampleRace();
   await refreshRace();
+  await workflow();
   assert.deepEqual(errors, []);
   await page.screenshot({ path: 'output/browser-checks/dashboard.png', fullPage: true });
+} catch (error) {
+  await page.screenshot({ path: "output/browser-checks/failure.png", fullPage: true });
+  throw error;
 } finally {
   await context.tracing.stop({ path: 'output/browser-checks/trace.zip' });
   await browser.close();
