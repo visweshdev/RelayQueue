@@ -1,6 +1,6 @@
 "use strict";
 const $ = id => document.getElementById(id);
-const state = {token:"", epoch:0, jobs:[], cursor:null, older:false, selected:null, selection:0, loading:false, sample:null, signature:"", controllers:new Set()};
+const state = {token:"", epoch:0, jobs:[], cursor:null, older:false, selected:null, selection:0, loading:false, sample:null, signature:"", controllers:new Set(), sampleVersion:0, sampleController:null};
 const labels = {succeeded:"Succeeded", running:"Running", queued:"Queued", failed_retrying:"Retrying", dead:"Failed", cancelled:"Cancelled", scheduled:"Scheduled"};
 function message(text, kind="info") {$("message").textContent=text; $("message").className=`notice ${kind}`;}
 function navigate() {
@@ -40,7 +40,12 @@ function connectionUI(connected, queue=null) {
   $("queue").value=queue||"default"; $("queue").disabled=!!queue;
   $("upload-help").textContent=connected?"Your report will run in the background. You can follow it immediately.":"Connect your workspace before creating a report.";
 }
+function invalidateSample() {
+  state.sampleVersion++; state.sampleController?.abort(); state.sampleController=null;
+  state.sample=null; $("use-sample").disabled=false;
+}
 function reset() {
+  invalidateSample(); $("file").value=""; $("file-name").textContent="Choose your sales CSV"; $("file-info").textContent="UTF-8 CSV · up to 48 KB";
   state.epoch++; state.controllers.forEach(c=>c.abort()); state.controllers.clear(); state.token=""; state.jobs=[];state.cursor=null;state.older=false;state.selected=null;state.selection++;state.loading=false;state.signature="";
   if($("detail").open) $("detail").close();
   $("key").value=""; $("search").value="";$("filter").value="";$("more").hidden=true;$("updated").textContent="Waiting for connection";$("poll-status").textContent="Updates appear here while connected.";
@@ -128,8 +133,28 @@ for(const action of ["retry","cancel"])$(action).onclick=async()=>{
   try{await api(`/v1/jobs/${id}/${action}`,{method:"POST"});if(epoch!==state.epoch)return;await updateJob();await load({background:true});if(id===state.selected)$("detail-message").textContent=action==="retry"?"Retry requested. Status will update automatically.":"Cancellation requested. Completed external effects cannot be undone.";}
   catch(e){if(epoch===state.epoch&&id===state.selected)$("detail-message").textContent=e.message;}finally{button.disabled=false;button.textContent=text;}
 };
-$("file").onchange=()=>{state.sample=null;const file=$("file").files[0];$("file-name").textContent=file?file.name:"Choose your sales CSV";$("file-info").textContent=file?`${file.size.toLocaleString()} bytes selected`:"UTF-8 CSV Â· up to 48 KB";};
-$("use-sample").onclick=async()=>{const button=$("use-sample");button.disabled=true;try{const response=await fetch("./sample.csv");if(!response.ok)throw new Error("Sample could not be loaded. Try downloading it instead.");state.sample=await response.text();$("file").value="";$("file-name").textContent="Sample sales.csv selected";$("file-info").textContent="3 rows Â· expected revenue 50.10";message("Sample data selected. Create the report when youâ€™re ready.","success");}catch(e){message(e.message,"error");}finally{button.disabled=false;}};
+$("file").onchange=()=>{invalidateSample();const file=$("file").files[0];$("file-name").textContent=file?file.name:"Choose your sales CSV";$("file-info").textContent=file?`${file.size.toLocaleString()} bytes selected`:"UTF-8 CSV Â· up to 48 KB";};
+$("use-sample").onclick=async()=>{
+  invalidateSample();
+  const version=state.sampleVersion, controller=new AbortController();
+  state.sampleController=controller; $("use-sample").disabled=true;
+  const timer=setTimeout(()=>controller.abort(),15000);
+  try {
+    const response=await fetch("./sample.csv",{signal:controller.signal});
+    if(!response.ok)throw new Error("Sample could not be loaded. Try downloading it instead.");
+    const content=await response.text();
+    if(version!==state.sampleVersion)return;
+    state.sample=content; $("file").value="";
+    $("file-name").textContent="Sample sales.csv selected";
+    $("file-info").textContent="3 rows · expected revenue 50.10";
+    message("Sample data selected. Create the report when you’re ready.","success");
+  } catch(e) {
+    if(version===state.sampleVersion)message(e.name==="AbortError"?"Sample request timed out. Try again.":e.message,"error");
+  } finally {
+    clearTimeout(timer);
+    if(version===state.sampleVersion){state.sampleController=null;$("use-sample").disabled=false;}
+  }
+};
 $("submit").onsubmit=async event=>{
   event.preventDefault();if(!state.token){message("Connect your workspace first.","error");return;}
   const epoch=state.epoch,button=$("submit-button"),queue=$("queue").value;button.disabled=true;button.textContent="Creating reportâ€¦";
