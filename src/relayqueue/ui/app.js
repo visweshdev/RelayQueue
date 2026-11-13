@@ -1,6 +1,6 @@
 "use strict";
 const $ = id => document.getElementById(id);
-const state = {token:"", epoch:0, jobs:[], cursor:null, older:false, selected:null, selection:0, loading:false, sample:null, signature:"", controllers:new Set(), sampleVersion:0, sampleController:null};
+const state = {token:"", epoch:0, jobs:[], cursor:null, older:false, selected:null, selection:0, loading:false, loadPromise:null, sample:null, signature:"", controllers:new Set(), sampleVersion:0, sampleController:null};
 const labels = {succeeded:"Succeeded", running:"Running", queued:"Queued", failed_retrying:"Retrying", dead:"Failed", cancelled:"Cancelled", scheduled:"Scheduled"};
 function message(text, kind="info") {$("message").textContent=text; $("message").className=`notice ${kind}`;}
 function navigate() {
@@ -46,7 +46,7 @@ function invalidateSample() {
 }
 function reset() {
   invalidateSample(); $("file").value=""; $("file-name").textContent="Choose your sales CSV"; $("file-info").textContent="UTF-8 CSV · up to 48 KB";
-  state.epoch++; state.controllers.forEach(c=>c.abort()); state.controllers.clear(); state.token=""; state.jobs=[];state.cursor=null;state.older=false;state.selected=null;state.selection++;state.loading=false;state.signature="";
+  state.epoch++; state.controllers.forEach(c=>c.abort()); state.controllers.clear(); state.token=""; state.jobs=[];state.cursor=null;state.older=false;state.selected=null;state.selection++;state.loading=false;state.loadPromise=null;state.signature="";
   if($("detail").open) $("detail").close();
   $("key").value=""; $("search").value="";$("filter").value="";$("more").hidden=true;$("updated").textContent="Waiting for connection";$("poll-status").textContent="Updates appear here while connected.";
   $("result").textContent="";$("history").replaceChildren();$("result-summary").replaceChildren();
@@ -73,18 +73,33 @@ function renderJobs() {
   $("empty-title").textContent=!state.token?"Your work starts here":state.jobs.length?"No matching jobs":"Ready for your first job";
   $("empty-description").textContent=!state.token?"Connect your workspace to see jobs and their progress.":state.jobs.length?"Try another search or status. Search covers the jobs loaded on this page.":"Create a report using your own CSV or try the sample data.";
 }
-async function load({append=false,background=false}={}) {
-  if(!state.token||state.loading)return;
-  if(background&&(state.older||$("rows").contains(document.activeElement)))return;
+async function load(options={}) {
+  const epoch=state.epoch;
+  if(!state.token)return false;
+  if(state.loadPromise){
+    if(options.background)return false;
+    // An explicit action waits, then makes its own request (including its cursor).
+    try{await state.loadPromise;}catch{/* The explicit request retries a failed poll. */}
+    if(epoch!==state.epoch||!state.token)return false;
+    return load(options);
+  }
+  const pending=performLoad(options); state.loadPromise=pending;
+  try{return await pending;}
+  finally{if(state.loadPromise===pending)state.loadPromise=null;}
+}
+async function performLoad({append=false,background=false}={}) {
+  if(!state.token)return false;
+  if(background&&(state.older||$("rows").contains(document.activeElement)))return false;
   const epoch=state.epoch;state.loading=true;
   if(!background){$("refresh").disabled=true;$("more").disabled=true;$("refresh").textContent="Refreshingâ€¦";}
   try {
     const page=await api(`/v1/jobs?limit=12${append&&state.cursor?`&cursor=${encodeURIComponent(state.cursor)}`:""}`);
-    if(epoch!==state.epoch)return;
+    if(epoch!==state.epoch)return false;
     state.jobs=append?[...new Map([...state.jobs,...page.items].map(job=>[job.id,job])).values()]:page.items;
     state.cursor=page.next_cursor;state.older=append;$("more").hidden=!state.cursor;renderJobs();
     $("updated").textContent=`Updated ${new Date().toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"})}`;
     $("poll-status").textContent=state.older?"Older jobs loaded. Refresh to return to the latest jobs.":"Live updates every 5 seconds.";
+    return true;
   } finally {if(epoch===state.epoch){state.loading=false;$("refresh").disabled=false;$("more").disabled=false;$("refresh").textContent="Refresh";}}
 }
 async function connect(candidate) {
@@ -98,7 +113,7 @@ async function connect(candidate) {
 $("connect").onsubmit=event=>{event.preventDefault();connect($("key").value.trim());};
 $("demo-connect").onclick=()=>connect("dev-key-1");
 $("disconnect").onclick=()=>{reset();message("Disconnected. Your access key and job details have been cleared.");};
-$("refresh").onclick=async()=>{try{await load();message("Job list refreshed.","success");}catch(e){message(e.message,"error");}};
+$("refresh").onclick=async()=>{const epoch=state.epoch;try{if(await load())message("Job list refreshed.","success");}catch(e){if(epoch===state.epoch)message(e.message,"error");}};
 $("more").onclick=()=>load({append:true}).catch(e=>message(e.message,"error"));
 $("search").oninput=renderJobs;$("filter").onchange=renderJobs;
 function renderDetails(job) {
