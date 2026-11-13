@@ -35,8 +35,33 @@ async function sampleRace() {
   assert.equal(await page.locator('#file').evaluate(input => input.files[0].name), 'my-sales.csv');
   console.log('PASS: delayed sample cannot replace a newer file selection');
 }
+async function refreshRace() {
+  await open(); await connect();
+  await page.evaluate(() => {
+    const original = window.fetch.bind(window);
+    window.listCalls = 0;
+    window.fetch = (url, options) => {
+      if (String(url).includes('/v1/jobs?')) {
+        window.listCalls++;
+        if (window.listCalls === 1) return new Promise(resolve => {
+          window.releaseList = () => resolve(original(url, options));
+        });
+      }
+      return original(url, options);
+    };
+  });
+  // Wait for the actual scheduled poll; do not invoke application internals.
+  await page.waitForFunction(() => typeof window.releaseList === 'function', { timeout: 12000 });
+  await page.getByRole('button', { name: 'Refresh', exact: true }).click();
+  assert.notEqual(await page.locator('#message').textContent(), 'Job list refreshed.');
+  await page.evaluate(() => window.releaseList());
+  await page.locator('#message').filter({ hasText: 'Job list refreshed.' }).waitFor();
+  assert.ok(await page.evaluate(() => window.listCalls >= 2));
+  console.log('PASS: manual refresh waits for polling and sends its own request');
+}
 try {
   await sampleRace();
+  await refreshRace();
   assert.deepEqual(errors, []);
   await page.screenshot({ path: 'output/browser-checks/dashboard.png', fullPage: true });
 } finally {
