@@ -16,3 +16,6 @@ dist/
 .playwright-cli/
 .secrets/
 backups/
+
+node_modules/
+output/browser-checks/
