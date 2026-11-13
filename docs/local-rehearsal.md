@@ -20,6 +20,8 @@ is 6 units and 50.10 revenue. Job details open immediately in a dialog. Jobs, re
 creation, the API guide and interactive API documentation navigate in the same tab.
 Search and status filtering apply to loaded jobs. Loading older jobs pauses automatic
 list refresh so pagination stays intact; Refresh returns to the newest jobs.
+An explicit refresh waits for any active poll, then sends its own request. Selecting a
+file cancels a pending sample load, so the later response cannot replace your selection.
 Live polling runs every five seconds while the tab is visible. A focused job-list
 control also pauses background list replacement so keyboard navigation stays stable.
 Open the URL rather than double-clicking `src/relayqueue/ui/index.html`; a file preview
@@ -114,6 +116,9 @@ To rehearse, stop the isolated reaper for over 90 seconds, inspect the firing ev
 restart it, and inspect the resolved event. Configure an authenticated operator destination
 before public use. Protect monitoring, add resource limits and capacity alerts, choose a
 domain/public certificate, test provider backups and document rollback before deployment.
+
+Long-running services use `restart: unless-stopped`; the migration service remains
+one-shot. See [browser and restart checks](browser-testing.md) for verification.
 
 Stop this project with `docker compose -f deploy/compose.hardened.yaml down`.
 Do not add `-v` unless deliberately discarding its data.

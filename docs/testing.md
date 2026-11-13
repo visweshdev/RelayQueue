@@ -131,3 +131,8 @@ docker run --rm --mount "type=bind,source=$($PWD.Path),target=/workspace" --moun
 
 On native Linux, use the normal host test command above instead of the Docker Desktop
 host override. Run performance experiments after tests finish to avoid resource contention.
+
+## Dashboard checks
+
+See [browser regression checks](browser-testing.md) for Node/Chromium setup, CI artifacts,
+and deployment restart verification. These complement the Python and chaos suites.
