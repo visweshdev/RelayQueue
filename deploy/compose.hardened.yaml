@@ -19,6 +19,7 @@ x-app: &app
     migrate: {condition: service_completed_successfully}
 services:
   postgres:
+    restart: unless-stopped
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: relayqueue
@@ -32,6 +33,7 @@ services:
       timeout: 3s
       retries: 20
   redis:
+    restart: unless-stopped
     image: redis:7.4-alpine
     entrypoint: [sh, -ec]
     command: ['exec redis-server --appendonly yes --requirepass "$$(cat /run/secrets/redis_password)"']
@@ -67,20 +69,24 @@ services:
     <<: *app
     command: [sh, -ec, "while true; do python -m relayqueue.retention --days 30 --limit 1000 --apply; sleep 86400; done"]
   gateway:
+    restart: unless-stopped
     image: caddy:2.10-alpine
     ports: ["127.0.0.1:8443:443"]
     volumes: ["./Caddyfile.local:/etc/caddy/Caddyfile:ro", "caddy-data:/data"]
     depends_on:
       api: {condition: service_healthy}
   prometheus:
+    restart: unless-stopped
     image: prom/prometheus:v3.0.1
     command: ["--config.file=/etc/prometheus/prometheus.yml"]
     volumes: ["./prometheus.secure.yml:/etc/prometheus/prometheus.yml:ro", "./alerts.yml:/etc/prometheus/alerts.yml:ro"]
   alertmanager:
+    restart: unless-stopped
     image: prom/alertmanager:v0.28.1
     command: ["--config.file=/etc/alertmanager/config.yml"]
     volumes: ["./alertmanager.yml:/etc/alertmanager/config.yml:ro"]
   alert-receiver:
+    restart: unless-stopped
     image: python:3.12-slim
     command: [python, /app/alert_receiver.py]
     volumes: ["./alert_receiver.py:/app/alert_receiver.py:ro", "alert-events:/events"]
