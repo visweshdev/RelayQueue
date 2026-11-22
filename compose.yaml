@@ -3,7 +3,7 @@ x-app: &app
   build:
     context: .
     dockerfile: deploy/Dockerfile
-  image: relayqueue:local
+  image: ${RELAYQUEUE_IMAGE:-relayqueue:local}
   restart: unless-stopped
   environment: &environment
     DATABASE_URL: postgresql+asyncpg://fq:fq@postgres:5432/fq
@@ -38,7 +38,7 @@ services:
     build:
       context: .
       dockerfile: deploy/Dockerfile
-    image: relayqueue:local
+    image: ${RELAYQUEUE_IMAGE:-relayqueue:local}
     restart: "no"
     entrypoint: [python, -m, relayqueue.examples.sales_report]
     command: [/app/examples/sales.csv, --verify-demo]
@@ -83,7 +83,7 @@ services:
     environment:
       <<: *environment
       API_WORKERS: ${API_WORKERS:-2}
-    ports: ["127.0.0.1:8000:8000"]
+    ports: ["127.0.0.1:${RELAYQUEUE_API_PORT:-8000}:8000"]
     healthcheck:
       test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/ready', timeout=4)"]
       interval: 10s
@@ -111,7 +111,7 @@ services:
   prometheus:
     image: prom/prometheus:v3.0.1
     volumes: ["./deploy/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
-    ports: ["127.0.0.1:9090:9090"]
+    ports: ["127.0.0.1:${RELAYQUEUE_PROMETHEUS_PORT:-9090}:9090"]
     restart: unless-stopped
   grafana:
     image: grafana/grafana:11.4.0
@@ -123,14 +123,11 @@ services:
       - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./deploy/grafana/dashboard.json:/var/lib/grafana/dashboards/relayqueue.json:ro
       - grafana-data:/var/lib/grafana
-    ports: ["127.0.0.1:3000:3000"]
+    ports: ["127.0.0.1:${RELAYQUEUE_GRAFANA_PORT:-3000}:3000"]
     depends_on: [prometheus]
     restart: unless-stopped
 
 volumes:
   postgres-data:
-    name: relayqueue_postgres-data
   redis-data:
-    name: relayqueue_redis-data
   grafana-data:
-    name: relayqueue_grafana-data

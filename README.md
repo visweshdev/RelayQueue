@@ -45,9 +45,12 @@ The included sample returns **3 rows · 6 units · 50.10 revenue**.
 
 ## Quick start
 
-With Docker running and Compose v2 installed, run from the repository root:
+Install Git and Docker with the Compose plugin, start the Linux container engine, and make sure
+loopback ports 8000, 3000, and 9090 are free. Run these commands from a terminal with internet access.
 
 ```sh
+git clone https://github.com/visweshdev/RelayQueue.git
+cd RelayQueue
 docker compose up -d --build --wait --wait-timeout 180
 ```
 
@@ -64,6 +67,8 @@ docker compose --profile demo run --rm demo
 ```
 
 It checks the successful report, duplicate submissions, and an invalid file's retry/dead-letter history.
+
+[Clean-install walkthrough, worker failure drill, and core tests](docs/getting-started.md).
 
 <details>
 <summary><strong>Submit your first job with the API</strong></summary>
@@ -138,15 +143,16 @@ twice. Submission deduplication does not promise exactly-once effects.
 | 20,000 noop jobs, four workers | **4,521 jobs/min** | [Benchmark report](docs/benchmarks/README.md) |
 | 1,000 CSV jobs, 3 rows each | **2,249 jobs/min**; all results validated | [Raw results](bench/results/sales-3-rows.json) |
 | 1,000 CSV jobs, 1,000 rows each | **1,899 jobs/min**; all results validated | [Raw results](bench/results/sales-1000-rows.json) |
+| 1,000 CSV jobs per trial, scaling from one to four workers | **1,285–2,273 jobs/min** across six trials | [Queue latency and resource comparison](docs/benchmarks/README.md#csv-worker-scaling) |
 | Worker crash campaign | **10,000 / 10,000 jobs succeeded** | [Recovery experiments](docs/benchmarks/README.md#reliability-experiments-and-demo) |
 
 These are recorded local experiments, not production capacity guarantees. Workloads and test
 conditions differ; the 35 ms submission result is **not** a CSV latency claim.
-[Reproduce the CSV measurements](docs/local-rehearsal.md#measured-csv-workload).
+[Reproduce the CSV measurements](docs/benchmarks/README.md#csv-worker-scaling).
 
 ## Verified locally
 
-**184 tests passed · 88.60% coverage** in the November 12, 2026 validation run.
+**186 tests passed · 88.48% branch-inclusive coverage** in the November 22, 2026 clean-checkout validation.
 
 - Browser-tested uploads, search, pagination, retry, cancellation, and network-error recovery.
 - Separate HTTPS rehearsal with queue-scoped tenant authorization and file-mounted secrets.
@@ -167,11 +173,13 @@ conditions differ; the 35 ms submission result is **not** a CSV latency claim.
 | [API](docs/api/README.md) | Submit work and inspect jobs programmatically |
 | [Architecture](docs/architecture/README.md) | Understand leases, fencing, retries, and recovery |
 | [CSV use case](docs/sales-report.md) | Process your own sales data |
+| [Worker recovery walkthrough](docs/getting-started.md#recover-an-interrupted-checksum) | Kill a worker and verify the result and metric |
 | [Operations](docs/operations/README.md) | Configure, monitor, and develop the system |
 | [Local HTTPS rehearsal](docs/local-rehearsal.md) | Try tenant isolation, retention, backups, and alerts |
 | [Benchmarks](docs/benchmarks/README.md) | Inspect measurements and reproduce experiments |
 | [Production boundaries](docs/production-readiness.md) | Evaluate tradeoffs and deployment requirements |
+| [Release notes](docs/releases/v0.1.0.md) | See the first public release and its artifacts |
 
----
+## License
 
-<p align="center"><sub>RelayQueue · Persistent jobs. Visible progress.</sub></p>
+RelayQueue is distributed under the [MIT License](LICENSE).

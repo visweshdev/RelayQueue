@@ -18,6 +18,15 @@ Prometheus: [localhost:9090](http://localhost:9090). Published ports bind to 127
 Copy `.env.example` to `.env` for overrides. `docker compose down` keeps persistent volumes;
 `docker compose down --volumes` intentionally removes demo data.
 
+For a second stack, choose a distinct Compose project with `docker compose -p NAME` and
+configure `RELAYQUEUE_API_PORT`, `RELAYQUEUE_GRAFANA_PORT`, and `RELAYQUEUE_PROMETHEUS_PORT`
+to unused loopback ports. Compose scopes the volumes to the project. The default project
+`relayqueue` still uses `relayqueue_postgres-data`, `relayqueue_redis-data`, and
+`relayqueue_grafana-data`. Set `RELAYQUEUE_IMAGE` to a different image tag when building a
+different source revision alongside the default installation. If an older checkout used
+`-p NAME`, inspect its mounts before upgrading. Start with project `relayqueue` to reuse the
+previously hard-coded `relayqueue_*` volumes, or migrate them as described below.
+
 ## Compose volume migration
 
 The local deployment was migrated on November 11, 2026, with all 372,073 pre-existing jobs
@@ -85,8 +94,8 @@ python -m mypy --strict src
 Testcontainers tests include concurrent idempotency, 1,000 jobs with eight claimants, lease loss,
 late results, cancellation, delayed jobs, Redis index loss, concurrent repair and cursor ties.
 Chaos tests use real Docker processes. CI runs lint/types/unit/integration/coverage/image build;
-nightly runs chaos, a short benchmark and monitoring checks. CI and Nightly reliability passed on commit `c0efe99` on November 11, 2026.
-See [workflow runs](https://github.com/visweshdev/RelayQueue/actions).
+nightly runs chaos, a short benchmark and monitoring checks. For recorded runs and the release
+gate, see [benchmark verification](../benchmarks/README.md#verification).
 Use [testing instructions](../testing.md) for exact commands and fixture safety.
 See [current delivery verification](../release-verification.md) and
 [production boundaries and operating costs](../production-readiness.md).

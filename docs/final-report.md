@@ -136,10 +136,10 @@ Locust CSV and source/image fingerprints are included. The refreshed November 6 
 the scaling history and return to four workers. Failure-event panels have no samples during
 that successful-workload window.
 
-Remote CI is now verified. Remaining production limitations: there is no job retention
-policy, Redis clustering, multiregion operation or tenant isolation. External effects require
-downstream idempotency; operational metrics may lose unscraped events on crashes. PostgreSQL
-backup/restore operations and deployment-specific production security are outside this local build.
+Remote CI was verified for this report. The benchmark stack used single-node PostgreSQL and
+Redis and development credentials. A later hardened rehearsal exercised tenant authorization,
+job retention, and backup/restore. External effects require downstream idempotency. Operational
+metrics may lose unscraped events on crashes. [Deployment boundaries](production-readiness.md).
 
 Historical benchmark runtime source SHA256: `4576bdd376a2bc9d9d9ba4ad0d075263ae5a146a0729c0e9cbbb049944d220cf`.
 Image: `sha256:802e9d4ccbf6de78d5ea6538e7351e9f54d91d63679a62b82057db9a641b80b7`.

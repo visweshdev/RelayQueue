@@ -1,0 +1,38 @@
+{
+  "job_id": "1e8c34d8-c842-46dd-88d7-acc445b79d70",
+  "input_sha256": "1ea9f43ce6ecf28f129fbc7c7cbd0634406f459778dc2006e5629ae6c516eb25",
+  "input_bytes": 69,
+  "status": "succeeded",
+  "result": {
+    "digest": "2313fa97dedeb9e621d744f485def36127aedee310085b6927036c332bc38d9e",
+    "iterations": 15000000
+  },
+  "history": [
+    {
+      "attempt_no": 1,
+      "worker_id": "57cccddec6d9:1:407bcfd7",
+      "started_at": "2026-11-22T09:18:17.883050Z",
+      "finished_at": "2026-11-22T09:18:28.490701Z",
+      "outcome": "lease_expired",
+      "error": "Execution lease lost",
+      "duration_ms": 10607,
+      "handler_finished_at": null,
+      "requeued_at": "2026-11-22T09:18:28.510528Z"
+    },
+    {
+      "attempt_no": 2,
+      "worker_id": "57cccddec6d9:1:d1a4e676",
+      "started_at": "2026-11-22T09:18:28.529367Z",
+      "finished_at": "2026-11-22T09:18:33.604842Z",
+      "outcome": "succeeded",
+      "error": null,
+      "duration_ms": 5075,
+      "handler_finished_at": "2026-11-22T09:18:33.604842Z",
+      "requeued_at": null
+    }
+  ],
+  "submit_to_observed_success_s": 15.813,
+  "prometheus_query": "sum(fq_lease_expired_total) or vector(0)",
+  "lease_expired_before": 0.0,
+  "lease_expired_after": 1.0
+}

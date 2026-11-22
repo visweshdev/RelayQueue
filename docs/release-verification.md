@@ -1,5 +1,8 @@
 # Delivery verification — November 11, 2026
 
+This is the historical sales-report delivery record. See the [release notes](releases/v0.1.0.md)
+and [verification record](benchmarks/README.md#verification) for the public release and newer runs.
+
 ## Implemented use case
 
 The [CSV sales-report demo](sales-report.md) uses real asynchronous jobs and persistent results.
@@ -35,5 +38,5 @@ The retained copies are not a continuous backup solution. See the
 
 Historical throughput/latency charts retain their original workload, machine and source
 fingerprints. These application additions have not been rerun through the full scaling campaign.
-The local deployment is not a public hosted service. Shared keys, single-node storage and lack
-of retention/tenant isolation remain explicit [production limitations](production-readiness.md).
+This delivery used single-node storage and shared development keys. A later hardened rehearsal
+exercised retention and tenant authorization. [Deployment boundaries](production-readiness.md).

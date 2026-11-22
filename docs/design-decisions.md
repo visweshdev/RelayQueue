@@ -138,8 +138,9 @@ Redis Cluster, multi-region, DAGs, public tenancy and retention/archival are int
 The local compose network has loopback-only published API/monitoring ports and no published database
 ports. Its static credentials are demo values. A real deployment needs secret management, TLS,
 network controls, backup/restore exercises, resource budgets, retention, monitoring alerts,
-load-tested failover, and an explicit review of external side effects. Compose and dashboard runtime have been verified locally. Remote CI still requires a configured
-GitHub repository.
+load-tested failover, and an explicit review of external side effects. The
+[deployment-readiness matrix](production-readiness.md#deployment-readiness-matrix) records local
+rehearsal coverage. [GitHub CI evidence](benchmarks/README.md#verification) covers the tested revisions.
 
 ## Independent maintenance loops
 

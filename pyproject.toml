@@ -7,6 +7,9 @@ name = "relayqueue"
 version = "0.1.0"
 description = "A PostgreSQL-authoritative distributed job queue with Redis leases"
 requires-python = ">=3.12,<3.13"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 dependencies = [
   "fastapi>=0.115,<1", "uvicorn[standard]>=0.30,<1", "pydantic>=2.9,<3",
   "pydantic-settings>=2.5,<3", "SQLAlchemy[asyncio]>=2.0.36,<2.1",
@@ -26,6 +29,9 @@ relayqueue-reaper = "relayqueue.reaper.reaper:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/relayqueue"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/src", "/LICENSE", "/README.md", "/pyproject.toml"]
 
 [tool.ruff]
 target-version = "py312"

@@ -1,0 +1,85 @@
+{
+  "task": "sales_report",
+  "machine": {
+    "cpu": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+    "logical_cpus": 18,
+    "ram_bytes": 16641941504,
+    "os": "Windows-11-10.0.26300-SP0",
+    "python": "3.12.14",
+    "docker_server": "29.9.2",
+    "docker_allocation": {
+      "logical_cpus": 18,
+      "ram_bytes": 8058470400
+    },
+    "runtime_image_id": "sha256:53dcb0eda113076b79bd2740355b9d3ea475de572b36b5551172fd1b1311926d",
+    "source_sha256": "b2e075fd3972a8108e9ce6e5c276325fed2befd1a6899f1ca0b81e43311551fb",
+    "timestamp": "2026-11-22T09:23:19.818642+00:00"
+  },
+  "jobs": 1000,
+  "rows_per_file": 1000,
+  "csv_bytes": 16024,
+  "workers_observed": 2,
+  "concurrency": 16,
+  "submission_seconds": 27.466381100000035,
+  "elapsed_seconds": 29.49835559999974,
+  "jobs_per_minute": 2034.0116857225942,
+  "submit_p95_ms": 959.9623999993128,
+  "submit_p99_ms": 1384.848200000306,
+  "submission_retries": 0,
+  "job_latencies": {
+    "single_attempt_successes": 1000,
+    "queue_ms": {
+      "p50": 23.275000000000002,
+      "p95": 216.76999999999998,
+      "p99": 355.693
+    },
+    "execution_ms": {
+      "p50": 24.337,
+      "p95": 36.486,
+      "p99": 50.683
+    },
+    "end_to_end_ms": {
+      "p50": 49.818,
+      "p95": 243.81,
+      "p99": 391.45000000000005
+    }
+  },
+  "container_resources": {
+    "sample_count": 9,
+    "services": {
+      "api": {
+        "mean_cpu_percent": 56.25,
+        "max_sampled_memory_mib": 191.1
+      },
+      "grafana": {
+        "mean_cpu_percent": 0.11,
+        "max_sampled_memory_mib": 63.46
+      },
+      "postgres": {
+        "mean_cpu_percent": 45.46,
+        "max_sampled_memory_mib": 128.7
+      },
+      "prometheus": {
+        "mean_cpu_percent": 0.24,
+        "max_sampled_memory_mib": 26.82
+      },
+      "reaper": {
+        "mean_cpu_percent": 4.8,
+        "max_sampled_memory_mib": 66.83
+      },
+      "redis": {
+        "mean_cpu_percent": 8.32,
+        "max_sampled_memory_mib": 6.39
+      },
+      "worker": {
+        "mean_cpu_percent": 161.65,
+        "max_sampled_memory_mib": 204.06
+      }
+    }
+  },
+  "outcomes": {
+    "succeeded": 1000
+  },
+  "all_results_valid": true,
+  "note": "Includes HTTP submission and polling; single run, not sustained-rate latency."
+}

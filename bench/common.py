@@ -45,7 +45,14 @@ def machine():
             cpus, memory = resources.stdout.split()
             allocation = {"logical_cpus": int(cpus), "ram_bytes": int(memory)}
         image_id = subprocess.run(
-            ["docker", "image", "inspect", "relayqueue:local", "--format", "{{.Id}}"],
+            [
+                "docker",
+                "image",
+                "inspect",
+                os.getenv("RELAYQUEUE_IMAGE", "relayqueue:local"),
+                "--format",
+                "{{.Id}}",
+            ],
             capture_output=True,
             text=True,
             timeout=10,

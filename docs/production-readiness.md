@@ -1,7 +1,19 @@
 # Tradeoffs and production boundaries
 
-RelayQueue is a runnable, tested reference system. Passing reliability tests establishes behavior
-under the tested failures, not a production SLA or real-user adoption.
+RelayQueue is a single-host reference system. The reliability evidence covers the specific
+failures exercised in the test suite and local rehearsals.
+
+## Deployment-readiness matrix
+
+| Area | Default development Compose | Hardened local Compose rehearsal | Before a public deployment |
+| --- | --- | --- | --- |
+| Network and TLS | Loopback HTTP API, Prometheus, and Grafana. PostgreSQL and Redis use the Compose network. | Only the loopback Caddy HTTPS gateway is published. It uses a local CA. | Use a public DNS name and trusted certificates. Keep backing stores and monitoring on private networks. |
+| Credentials and access | Shared development API key with access to all queues. Demo database and Grafana credentials. | File-mounted credentials, Redis authentication, and queue-scoped API permissions. | Provision and rotate managed secrets. Validate authorization and limit access to the intended users. |
+| Data lifecycle | Persistent named volumes. No scheduled pruning or backup in this stack. | Daily 30-day retention for terminal jobs, plus an on-demand PostgreSQL backup and verified isolated restore. | Schedule encrypted off-host backups, test restores against recovery objectives, and set a retention policy. |
+| Monitoring and alerts | Prometheus and a provisioned Grafana dashboard. | Prometheus rules and Alertmanager deliver to a local receiver. | Route alerts to an external on-call destination and test delivery. |
+| Availability and rollout | Single-host PostgreSQL and Redis. Container restart policies and a one-shot migration. | Same single-host dependency. Restart recovery was exercised locally. | Set CPU, memory, disk, and connection budgets. Rehearse rollback and database recovery on the target infrastructure. |
+
+[Hardened configuration and recorded verification](local-rehearsal.md).
 
 | Decision | Benefit | Cost or limitation |
 | --- | --- | --- |
@@ -34,17 +46,13 @@ No cloud bill estimate is claimed without a provider, workload and retention pol
 Measure accepted/drained throughput, queue age, database pool pressure, CPU/RAM and storage growth
 under your actual handlers. Published noop throughput includes load-client overhead and is not a
 capacity promise for file parsing or external APIs. Existing benchmark data remains tied to its
-recorded source and machine. [CSV measurements](local-rehearsal.md#measured-csv-workload)
-now cover 1,000 jobs per run; the 20,000-job campaign remains a noop workload.
+recorded source and machine. The CSV worker comparison covers 1,000 sales reports per run. The
+20,000-job campaign uses noop handlers. [CSV worker scaling](benchmarks/README.md#csv-worker-scaling).
 
-## Before exposing it publicly
+## Failure boundaries
 
-The [isolated local rehearsal](local-rehearsal.md) implements TLS, file-mounted secrets,
-queue-scoped tenant authorization, retention, backup/restore verification and local alerts.
-Before public use, configure managed secrets, off-host backup scheduling, resource limits,
-external alert routing and a deployment rollback procedure. The included shared API keys and local
-passwords are development defaults. PostgreSQL/Redis are single-node in Compose; a host or disk
-failure requires backups, not just queue retries. Cancellation cannot undo completed side effects.
+Worker leases cover abandoned execution. A lost host or disk requires restoring PostgreSQL from
+a backup and rebuilding Redis indexes. Cancellation cannot undo completed side effects.
 
 See [the CSV demo](sales-report.md), [architecture](architecture/README.md), and
 [operations](operations/README.md) for the implemented behavior and reproduction commands.

@@ -1,0 +1,94 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    uses: ./.github/workflows/ci.yml
+
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      LEASE_MS: "10000"
+      HEARTBEAT_MS: "2000"
+      REAPER_INTERVAL_MS: "1000"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check tag and build distributions
+        run: |
+          version=$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')
+          test "$GITHUB_REF_NAME" = "v$version"
+          test -s "docs/releases/$GITHUB_REF_NAME.md"
+          python -m pip install build twine
+          python -m build
+          python -m twine check --strict dist/*
+      - name: Test the installed wheel and a clean Compose startup
+        run: |
+          python -m venv "$RUNNER_TEMP/relayqueue-wheel"
+          wheel_python="$RUNNER_TEMP/relayqueue-wheel/bin/python"
+          "$wheel_python" -m pip install -r requirements.txt
+          "$wheel_python" -m pip install --no-deps dist/*.whl
+          (
+            cd "$RUNNER_TEMP"
+            "$wheel_python" - <<'PY'
+          from importlib.metadata import distribution
+          from relayqueue.api.main import app
+
+          release = distribution("relayqueue")
+          files = {str(path) for path in release.files}
+          assert app.title == "RelayQueue"
+          assert release.metadata["License-Expression"] == "MIT"
+          assert any(path.endswith("/licenses/LICENSE") for path in files)
+          assert "relayqueue/ui/app.js" in files
+          assert any(path.startswith("relayqueue/broker/") and path.endswith(".lua") for path in files)
+          PY
+          )
+          docker compose up -d --build --wait --wait-timeout 180
+          docker compose --profile demo run --rm demo
+          "$wheel_python" -m pip install -r requirements-dev.txt
+          "$wheel_python" -m bench.checksum_recovery --project relayqueue
+      - name: Capture startup and recovery logs
+        if: failure()
+        run: docker compose logs --no-color
+      - name: Stop disposable runner stack
+        if: always()
+        run: docker compose down --volumes
+      - name: Create checksums
+        run: (cd dist && sha256sum *.whl *.tar.gz > SHA256SUMS)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-distributions
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    needs: [verify, package]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-distributions
+          path: dist/
+      - name: Publish tested assets and release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          (cd dist && sha256sum -c SHA256SUMS)
+          gh release create "$GITHUB_REF_NAME" dist/* --verify-tag \
+            --title "RelayQueue $GITHUB_REF_NAME" --notes-file "docs/releases/$GITHUB_REF_NAME.md"
