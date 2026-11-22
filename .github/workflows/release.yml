@@ -18,10 +18,10 @@ jobs:
       HEARTBEAT_MS: "2000"
       REAPER_INTERVAL_MS: "1000"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Check tag and build distributions
@@ -65,7 +65,7 @@ jobs:
         run: docker compose down --volumes
       - name: Create checksums
         run: (cd dist && sha256sum *.whl *.tar.gz > SHA256SUMS)
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: release-distributions
           path: dist/
@@ -78,10 +78,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: release-distributions
           path: dist/
